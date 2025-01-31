@@ -1,34 +1,112 @@
-if (works === null) {
-    // Récupération des projet depuis l'API
-    const reponse = await fetch("http://localhost:5678/api/works/")
-    works = await reponse.json()
-    // Transformation des projet en JSON
-    const valeurWorks = JSON.stringify(works)
-    // Stockage des informations dans le localStorage
-    window.localStorage.setItem("works", valeurWorks)
-} else {
-    works = JSON.parse(works);
-}
+let worksData =[];
 
-function generateWorks(works) {
-    for (let i = 0; i < works.length; i++) {
+// Fonction asynchrone pour générer les travaux à partir de l'API
+export async function generateWorks() {
+    // Récupération des travaux depuis l'API
+    const response = await fetch("http://localhost:5678/api/works/", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    // Transformation des pièces en JSON
+    worksData = await response.json();
 
-        const article = works[i]
-        // Récupération de l'élément du DOM qui accueillera les fiches
-        const sectionGallery = document.querySelector(".gallery")
-        // Création d’une balise dédiée un projet
-        const worksElement = document.createElement ("article")
-        worksElement.dataset.id = works[i].id
+    // Extraction des catégories uniques des travaux
+    const categories = worksData.map(works => works.category);
+    const uniqueCategories = [...new Set(categories)];
+    console.log(uniqueCategories);
+    // Récupération de l'élément du DOM qui accueillera les travaux
+    const sectionGallery = document.querySelector(".gallery");
+    sectionGallery.innerHTML = '';
+
+    // Boucle sur les travaux récupérées pour les afficher dans la galerie
+    worksData.forEach(article => {
+        // Création d’une balise dédiée
+        const worksElement = document.createElement("article");
+        worksElement.dataset.id = article.id;
         // Création des balises 
-        const imageElemnt = document.createElement("img")
-        imageElemnt.src = article.image
-        const nomElement = document.createElement("p")
-        nomElement.innerText = article.nom
-        // On rattache la balise article a la section gallery
-        sectionGallery.appendChild(worksElement)
-        worksElement.appendChild(imageElemnt)
-        worksElement.appendChild(nomElement)
-    }
+        const imageElement = document.createElement("img");
+        imageElement.src = article.imageUrl;
+        imageElement.alt = article.title;
+        const nomElement = document.createElement("p");
+        nomElement.innerText = article.title;
+        // Ajout des éléments créés dans l'élément article
+        worksElement.appendChild(imageElement);
+        worksElement.appendChild(nomElement);
+        // Ajout de l'élément article à la galerie
+        sectionGallery.appendChild(worksElement);
+    });
 }
 
-generateWorks(works);
+// Fonction pour générer les filtres
+function generateFilter() {
+    // Récupération de l'élément DOM qui contient les filtres
+    const sectionFilter = document.querySelector(".filter");
+
+    // Création du bouton "Tous" pour afficher toutes les œuvres
+    const allButton = document.createElement("button");
+    allButton.innerText = "Tous";
+    allButton.addEventListener("click", function () {
+        console.log('Affichage de toutes les œuvres');
+        generateWorks();
+    });
+    // Création du bouton "Objets" pour filtrer les œuvres par catégorie "Objets"
+    const objectButton = document.createElement("button");
+    objectButton.innerText = "Objets";
+    objectButton.addEventListener("click", function () {
+        console.log('Filtre: Objets');
+        const filteredWorks = worksData.filter(works => works.category === "Objets");
+        updateGallery(filteredWorks);
+    });
+    // Création du bouton "Appartements" pour filtrer les œuvres par catégorie "Appartements"
+    const apartmentButton = document.createElement("button");
+    apartmentButton.innerText = "Appartements";
+    apartmentButton.addEventListener("click", function () {
+        console.log('Filtre: Appartements');
+        const filteredWorks = worksData.filter(works => works.category === "Appartements");
+        updateGallery(filteredWorks);
+    });
+    // Création du bouton "Hotels & Restaurant" pour filtrer les œuvres par catégorie "Hotels & restaurants"
+    const hotelAndRestaurantButton = document.createElement("button");
+    hotelAndRestaurantButton.innerText = "Hotels & Restaurant";
+    hotelAndRestaurantButton.addEventListener("click", function () {
+        console.log('Filtre: Hotels & restaurants');
+        const filteredWorks = worksData.filter(works => works.category === "Hotels & restaurants");
+        updateGallery(filteredWorks);
+    });
+
+    // Ajout des boutons créés dans la section des filtres
+    sectionFilter.appendChild(allButton);
+    sectionFilter.appendChild(objectButton);
+    sectionFilter.appendChild(apartmentButton);
+    sectionFilter.appendChild(hotelAndRestaurantButton);
+}
+
+// Fonction pour mettre à jour la galerie avec les travaux filtrées
+function updateGallery(filteredWorks) {
+    // Récupération de l'élément du DOM qui accueillera les travaux
+    const sectionGallery = document.querySelector(".gallery");
+    sectionGallery.innerHTML = '';
+
+    // Boucle sur les œuvres filtrées pour les afficher
+    filteredWorks.forEach(article => {
+        // Création d’une balise dédiée
+        const worksElement = document.createElement("article");
+        worksElement.dataset.id = article.id;
+        // Création des balises 
+        const imageElement = document.createElement("img");
+        imageElement.src = article.imageUrl;
+        imageElement.alt = article.title;
+        const nomElement = document.createElement("p");
+        nomElement.innerText = article.title;
+        // Ajout des éléments créés dans l'élément article
+        worksElement.appendChild(imageElement);
+        worksElement.appendChild(nomElement);
+        // Ajout de l'élément article à la galerie
+        sectionGallery.appendChild(worksElement);
+    });
+}
+
+generateFilter();
+generateWorks();
