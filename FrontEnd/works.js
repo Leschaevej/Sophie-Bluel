@@ -50,30 +50,36 @@ function generateFilter() {
     allButton.addEventListener("click", function () {
         console.log('Affichage de toutes les œuvres');
         generateWorks();
+        setActiveButton(allButton);
     });
+    // Ajouter le bouton "Tous" comme actif par défaut
+    allButton.classList.add("active");
     // Création du bouton "Objets" pour filtrer les œuvres par catégorie "Objets"
     const objectButton = document.createElement("button");
     objectButton.innerText = "Objets";
     objectButton.addEventListener("click", function () {
         console.log('Filtre: Objets');
-        const filteredWorks = worksData.filter(works => works.category === "Objets");
+        const filteredWorks = worksData.filter(works => works.category.name === "Objets");
         updateGallery(filteredWorks);
+        setActiveButton(objectButton);
     });
     // Création du bouton "Appartements" pour filtrer les œuvres par catégorie "Appartements"
     const apartmentButton = document.createElement("button");
     apartmentButton.innerText = "Appartements";
     apartmentButton.addEventListener("click", function () {
         console.log('Filtre: Appartements');
-        const filteredWorks = worksData.filter(works => works.category === "Appartements");
+        const filteredWorks = worksData.filter(works => works.category.name === "Appartements");
         updateGallery(filteredWorks);
+        setActiveButton(apartmentButton);
     });
     // Création du bouton "Hotels & Restaurant" pour filtrer les œuvres par catégorie "Hotels & restaurants"
     const hotelAndRestaurantButton = document.createElement("button");
     hotelAndRestaurantButton.innerText = "Hotels & Restaurant";
     hotelAndRestaurantButton.addEventListener("click", function () {
         console.log('Filtre: Hotels & restaurants');
-        const filteredWorks = worksData.filter(works => works.category === "Hotels & restaurants");
+        const filteredWorks = worksData.filter(works => works.category.name === "Hotels & restaurants");
         updateGallery(filteredWorks);
+        setActiveButton(hotelAndRestaurantButton);
     });
 
     // Ajout des boutons créés dans la section des filtres
@@ -106,6 +112,21 @@ function updateGallery(filteredWorks) {
         // Ajout de l'élément article à la galerie
         sectionGallery.appendChild(worksElement);
     });
+}
+
+// Fonction pour ajouter la classe active au bouton cliqué
+function setActiveButton(selectedButton) {
+    // Sélectionner tous les boutons
+    const buttons = document.querySelectorAll(".filter button");
+
+    // Retirer la classe active de tous les boutons
+    buttons.forEach(button => {
+        button.classList.remove("active");
+    });
+
+    // Ajouter la classe active au bouton sélectionné
+    selectedButton.classList.add("active");
+    console.log(`${selectedButton.innerText} est actif`);
 }
 
 generateFilter();
