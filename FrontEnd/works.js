@@ -130,46 +130,19 @@ function setActiveButton(selectedButton) {
 }
 
 // Fonction pour gérer l'affichage du formulaire de connexion
-function setupLoginEvent() {
-    // Sauvegarde le Html
-    let savedcontent = '';
-    function saveInitialContent() {
-        const mainContent = document.getElementById("mainContent");
-        savedcontent = mainContent.innerHTML;
-    }
-   
-    // Charge le Html du login
-    function setupLogin() {
-        document.querySelector("#loginLink").addEventListener("click", function(event) {
-        event.preventDefault();
-        const mainContent = document.getElementById("mainContent");
-        mainContent.innerHTML =`
-        <h2>Login</h2>
-        <form id="loginForm">
-            <label for="email">Email :</label>
-            <input type="text" id="email" name="email" required>   
-            <label for="password">Mot de passe :</label>
-            <input type="password" id="password" name="password" required>    
-            <button type="submit">Se connecter</button>
-        </form>`;
-        });
-    }
-
-    // Revient au contenu initial
-    function setupReturnToHome() {
-        document.querySelector("#homeLink").addEventListener("click", function() {
-        const mainContent = document.getElementById("mainContent");
-        mainContent.innerHTML = savedcontent;
-        })
-    }
-    
-    document.addEventListener("DOMContentLoaded", function() {
-        saveInitialContent();
+function setupLogin() {
+    document.getElementById('loginLink').addEventListener('click', function() {
+        document.getElementById('loginOverlay').style.display = 'flex'; // Afficher l'overlay
     });
-    setupLogin();
-    setupReturnToHome();
+
+    document.getElementById('loginOverlay').addEventListener('click', function(event) {
+        if (event.target === document.getElementById('loginOverlay')) {
+            document.getElementById('loginOverlay').style.display = 'none'; // Fermer si on clique sur le fond
+        }
+    });
+
 };
 
-setupLoginEvent();
+setupLogin();
 generateFilter();
 generateWorks();

@@ -2,7 +2,11 @@
    v2.0 | 20110126
    License: none (public domain)
 */
-
+:root {
+	--main-color: #1d6154;
+	--second-color: #0e2f28;
+	--header-color:#B1663C;
+}
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -82,7 +86,7 @@ h2{
 	font-family: 'Syne';
 	font-weight: 700;
 	font-size: 30px;
-	color: #1D6154
+	color: var(--main-color)
 }
 nav ul {
 	display: flex;
@@ -96,7 +100,7 @@ nav li {
 }
 
 li:hover {
-	color: #B1663C;
+	color: var(--header-color);
 }
 #introduction {
 	display: flex;
@@ -142,15 +146,16 @@ li:hover {
 	min-width: 100px;
 	border-radius: 20px;
 	background-color: white;
-	border: 1px solid #1D6154;
+	border: 1px solid var(--main-color);
 }
 
 .filter button:hover {
-	background-color: lightgray;
+	background-color: var(--second-color);
+	color: white;
 }
 
 .filter button.active {
-	background-color: #1D6154;
+	background-color: var(--main-color);
 	color: white;
 }
 
@@ -168,11 +173,10 @@ li:hover {
 }
 #contact {
 	width: 50%;
-margin: auto;
+	margin: auto;
 }
 #contact > * {
 	text-align: center;
-
 }
 #contact h2{
 	margin-bottom: 20px;
@@ -198,15 +202,50 @@ margin: auto;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
+#loginOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    align-items: center;
+	flex-direction: column;
+	margin-top: 140px;
+}
+
+#loginOverlay > * {
+	text-align: center;
+}
+
+#loginOverlay form {
+	text-align: left;
+    width: 380px;
+	display: flex;
+	flex-direction: column;
+}
+
+#loginOverlay input {
+    padding: 20px;
+    margin-top: 10px;
+	margin-bottom: 30px;
+    border: none;
+	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+}
+
 input[type="submit"]{
 	font-family: 'Syne';
 	font-weight: 700;
 	color: white;
-	background-color: #1D6154;
+	background-color: var(--main-color);
 	margin : 2em auto ;
 	width: 180px;
-	text-align: center;
 	border-radius: 60px ;
+}
+
+input :hover {
+	background-color: var(--second-color);
 }
 
 footer nav ul {
