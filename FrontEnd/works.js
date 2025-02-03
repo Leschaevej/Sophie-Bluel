@@ -1,7 +1,7 @@
 let worksData =[];
 
 // Fonction asynchrone pour générer les travaux à partir de l'API
-export async function generateWorks() {
+ async function generateWorks() {
     // Récupération des travaux depuis l'API
     const response = await fetch("http://localhost:5678/api/works/", {
         method: "GET",
@@ -129,5 +129,47 @@ function setActiveButton(selectedButton) {
     console.log(`${selectedButton.innerText} est actif`);
 }
 
+// Fonction pour gérer l'affichage du formulaire de connexion
+function setupLoginEvent() {
+    // Sauvegarde le Html
+    let savedcontent = '';
+    function saveInitialContent() {
+        const mainContent = document.getElementById("mainContent");
+        savedcontent = mainContent.innerHTML;
+    }
+   
+    // Charge le Html du login
+    function setupLogin() {
+        document.querySelector("#loginLink").addEventListener("click", function(event) {
+        event.preventDefault();
+        const mainContent = document.getElementById("mainContent");
+        mainContent.innerHTML =`
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="email">Email :</label>
+            <input type="text" id="email" name="email" required>   
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" name="password" required>    
+            <button type="submit">Se connecter</button>
+        </form>`;
+        });
+    }
+
+    // Revient au contenu initial
+    function setupReturnToHome() {
+        document.querySelector("#homeLink").addEventListener("click", function() {
+        const mainContent = document.getElementById("mainContent");
+        mainContent.innerHTML = savedcontent;
+        })
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        saveInitialContent();
+    });
+    setupLogin();
+    setupReturnToHome();
+};
+
+setupLoginEvent();
 generateFilter();
 generateWorks();
