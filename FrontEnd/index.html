@@ -10,20 +10,21 @@
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
 	<script type="module" src="./works.js"></script>
+
 </head>
 <body>
 <header>
-	<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
+	<h1 id ="homeLink">Sophie Bluel <span>Architecte d'intérieur</span></h1>
 	<nav>
 		<ul>
 			<li>projets</li>
 			<li>contact</li>
-			<li>login</li>
+			<li href="#" id="loginLink">Login</li>
 			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
 		</ul>
 	</nav>
 </header>
-<main>
+<main id="mainContent">
 	<section id="introduction">
 		<figure>
 			<img src="./assets/images/sophie-bluel.png" alt="">
@@ -57,6 +58,16 @@
 			<input type="submit" value="Envoyer">
 		</form>
 	</section>
+	<section id="loginOverlay" class="overlay">
+            <h2>Login</h2>
+            <form action="#" method="post">
+                <label for="username">E-mail</label>
+                <input type="text" id="username" name="username" required>
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" required>
+                <input type="submit" value="Se connecter">
+            </form>
+    </section>
 </main>
 
 <footer>
@@ -68,4 +79,3 @@
 </footer>
 </body>
 </html>
-<!---->

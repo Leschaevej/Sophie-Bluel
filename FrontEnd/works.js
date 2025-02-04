@@ -1,7 +1,7 @@
 let worksData =[];
 
 // Fonction asynchrone pour générer les travaux à partir de l'API
-export async function generateWorks() {
+ async function generateWorks() {
     // Récupération des travaux depuis l'API
     const response = await fetch("http://localhost:5678/api/works/", {
         method: "GET",
@@ -129,6 +129,20 @@ function setActiveButton(selectedButton) {
     console.log(`${selectedButton.innerText} est actif`);
 }
 
+// Fonction pour gérer l'affichage du formulaire de connexion
+function setupLogin() {
+    document.getElementById('loginLink').addEventListener('click', function() {
+        document.getElementById('loginOverlay').style.display = 'flex'; // Afficher l'overlay
+    });
+
+    document.getElementById('loginOverlay').addEventListener('click', function(event) {
+        if (event.target === document.getElementById('loginOverlay')) {
+            document.getElementById('loginOverlay').style.display = 'none'; // Fermer si on clique sur le fond
+        }
+    });
+
+};
+
+setupLogin();
 generateFilter();
 generateWorks();
-//
