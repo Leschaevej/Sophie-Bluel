@@ -7,6 +7,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
 	<script type="module" src="./works.js"></script>
@@ -38,14 +39,31 @@
 		</article>
 	</section>
 	<section id="portfolio">
-		<h2>Mes Projets</h2>
+		<div id="mesProjets">
+			<h2>Mes Projets</h2>
+			<div id="modifier">
+				<a href="#" id="openModalLink">
+					<i class="fa-regular fa-pen-to-square"></i> Modifier
+				</a>
+			</div>
+		</div>
+		<div id="modalOverlay">
+			<div id="modalContent">
+				<button id="closeModal"><i class="fa-solid fa-xmark"></i></button>
+				<h2>Galerie photo</h2>
+				<div class ="modalGallery">
+					<!-- works.js -->
+				</div>
+				<input type="submit" value="Ajouter une photo" />
+			</div>
+		</div>
 		<div class="filter">
-			<!--works.js-->
+			<!-- works.js -->
 		</div>
 		<div class="gallery">
-			<!--works.js-->
+			<!-- works.js -->
 		</div>
-	</section>
+	</section>	
 	<section id="contact">
 		<h2>Contact</h2>
 		<p>Vous avez un projet ? Discutons-en !</p>
@@ -70,7 +88,6 @@
 			<p id="loginError"></p>
 		</form>
 	</section>
-	
 </main>
 <footer>
 	<nav>

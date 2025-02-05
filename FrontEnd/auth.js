@@ -126,6 +126,7 @@ function logOut () {
     document.addEventListener("DOMContentLoaded", function () {
         const loginLink = document.getElementById("loginLink");
         const logoutLink = document.getElementById("logoutLink");
+        const openModalLink = document.getElementById("openModalLink");
     
         function checkAuth() {
             const token = localStorage.getItem("token");
@@ -134,10 +135,12 @@ function logOut () {
                 // L'utilisateur est connecté
                 loginLink.style.display = "none";
                 logoutLink.style.display = "inline";
+                openModalLink.style.display = "inline"; // Afficher le lien "Modifier"
             } else {
                 // L'utilisateur est déconnecté
                 loginLink.style.display = "inline";
                 logoutLink.style.display = "none";
+                openModalLink.style.display = "none"; // Masquer le lien "Modifier"
             }
         }
     
@@ -147,7 +150,8 @@ function logOut () {
         // Ajout de l'événement pour se déconnecter
         logoutLink.addEventListener("click", function () {
             localStorage.removeItem("token");
-            checkAuth();
+            checkAuth();  // Re-vérifier l'état de connexion après la déconnexion
         });
     }); 
 }
+

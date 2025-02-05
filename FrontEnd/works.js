@@ -1,4 +1,5 @@
 import { loginOverlay, userLogin, logOut } from "./auth.js"; 
+import { openModal, checkAuth } from "./modal.js"; 
 
 let worksData =[];
 
@@ -23,7 +24,11 @@ async function generateWorks() {
 
     // Récupération de l'élément du DOM qui accueillera les travaux
     const sectionGallery = document.querySelector(".gallery");
+    const modalGallery = document.querySelector(".modalGallery");
+
+    // Vider la galerie et la modal avant de les remplir
     sectionGallery.innerHTML = '';
+    modalGallery.innerHTML = '';
 
     // Boucle sur les travaux récupérées pour les afficher dans la galerie
     worksData.forEach(article => {
@@ -31,8 +36,8 @@ async function generateWorks() {
         // Création d’une balise dédiée
         const worksElement = document.createElement("article");
         worksElement.dataset.id = article.id;
+        
         // Création des balises 
-
         const imageElement = document.createElement("img");
         imageElement.src = article.imageUrl;
         imageElement.alt = article.title;
@@ -45,6 +50,15 @@ async function generateWorks() {
 
         // Ajout de l'élément article à la galerie
         sectionGallery.appendChild(worksElement);
+
+
+        // Création des balises pour la modale
+        const modalImageElement = document.createElement("img");
+        modalImageElement.src = article.imageUrl;
+        modalImageElement.alt = article.title;
+
+        // Ajout de l'image à la galerie modale
+        modalGallery.appendChild(modalImageElement);
     });
 }
 
@@ -149,6 +163,8 @@ function setActiveButton(selectedButton) {
     console.log(`${selectedButton.innerText} est actif`);
 }
 
+checkAuth();
+openModal();
 logOut();
 userLogin();
 loginOverlay();
