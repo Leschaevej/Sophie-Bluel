@@ -88,7 +88,7 @@ function userLogin() {
             localStorage.setItem("logs", JSON.stringify(logs));
 
             // Stocke le token dans localStorage
-            localStorage.setItem("token", data.token);
+            sessionStorage.setItem("token", data.token);
 
             // Redirige l'utilisateur vers la page d'accueil après une connexion réussie
             window.location.href = "index.html"; 
@@ -120,6 +120,10 @@ function userLogin() {
         console.log(`[${timestamp}] ${log.message}`, log.data || "");
         });
     });
+
+    window.addEventListener("beforeunload", function () {
+        localStorage.removeItem("token"); // Supprime le token à la fermeture ou au rechargement de la page
+    });
 }
 
 function logOut () {
@@ -129,7 +133,7 @@ function logOut () {
         const openModalLink = document.getElementById("openModalLink");
     
         function checkAuth() {
-            const token = localStorage.getItem("token");
+            const token = sessionStorage.getItem("token");
     
             if (token) {
                 // L'utilisateur est connecté
@@ -149,7 +153,7 @@ function logOut () {
     
         // Ajout de l'événement pour se déconnecter
         logoutLink.addEventListener("click", function () {
-            localStorage.removeItem("token");
+            sessionStorage.removeItem("token");
             checkAuth();  // Re-vérifier l'état de connexion après la déconnexion
         });
     }); 

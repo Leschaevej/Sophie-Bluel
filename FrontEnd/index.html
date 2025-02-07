@@ -50,11 +50,24 @@
 		<div id="modalOverlay">
 			<div id="modalContent">
 				<button id="closeModal"><i class="fa-solid fa-xmark"></i></button>
-				<h2>Galerie photo</h2>
 				<div class ="modalGallery">
 					<!-- works.js -->
 				</div>
-				<input type="submit" value="Ajouter une photo" />
+				<div class ="modalForm">
+					<h2>Ajout photo</h2>
+					<div class ="form-container">
+						<input type="file" id="image" name="image" required />
+						<label for="title">Titre</label>
+            			<input type="text" id="title" name="title" placeholder="Titre de la photo" required />
+						<label for="category">Catégorie</label>
+            			<select id="category" name="category" required>
+                			<option value="objects">Objets</option>
+                			<option value="apartments">Appartements</option>
+                			<option value="hotels">Hôtels & Restaurants</option>
+            			</select>
+					</div>
+				</div>
+				<input type="submit" value="Ajouter une photo" id="addPhotoButton" />
 			</div>
 		</div>
 		<div class="filter">
@@ -90,11 +103,9 @@
 	</section>
 </main>
 <footer>
-	<nav>
-		<ul>
-			<li>Mentions Légales</li>
-		</ul>
-	</nav>
+	<ul>
+		<li>Mentions Légales</li>
+	</ul>
 </footer>
 </body>
 </html>

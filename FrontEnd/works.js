@@ -1,11 +1,10 @@
 import { loginOverlay, userLogin, logOut } from "./auth.js"; 
-import { openModal, checkAuth } from "./modal.js"; 
+import { openModal, checkAuth, modalGallery } from "./modal.js"; 
 
 let worksData =[];
 
 // Fonction asynchrone pour générer les travaux à partir de l'API
 async function generateWorks() {
-
     // Récupération des travaux depuis l'API
     const response = await fetch("http://localhost:5678/api/works/", {
         method: "GET",
@@ -24,19 +23,17 @@ async function generateWorks() {
 
     // Récupération de l'élément du DOM qui accueillera les travaux
     const sectionGallery = document.querySelector(".gallery");
-    const modalGallery = document.querySelector(".modalGallery");
+    const modal = document.querySelector(".modalGallery");
 
     // Vider la galerie et la modal avant de les remplir
     sectionGallery.innerHTML = '';
-    modalGallery.innerHTML = '';
 
     // Boucle sur les travaux récupérées pour les afficher dans la galerie
     worksData.forEach(article => {
-
-        // Création d’une balise dédiée
+        // Création d’une balise dédiée pour l'article
         const worksElement = document.createElement("article");
         worksElement.dataset.id = article.id;
-        
+
         // Création des balises 
         const imageElement = document.createElement("img");
         imageElement.src = article.imageUrl;
@@ -49,17 +46,9 @@ async function generateWorks() {
         worksElement.appendChild(nomElement);
 
         // Ajout de l'élément article à la galerie
-        sectionGallery.appendChild(worksElement);
-
-
-        // Création des balises pour la modale
-        const modalImageElement = document.createElement("img");
-        modalImageElement.src = article.imageUrl;
-        modalImageElement.alt = article.title;
-
-        // Ajout de l'image à la galerie modale
-        modalGallery.appendChild(modalImageElement);
+        sectionGallery.appendChild(worksElement);        
     });
+    modalGallery();
 }
 
 // Fonction pour générer les filtres
@@ -146,7 +135,6 @@ function updateGallery(filteredWorks) {
         sectionGallery.appendChild(worksElement);
     });
 }
-
 
 function setActiveButton(selectedButton) {
 
