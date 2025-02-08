@@ -1,7 +1,7 @@
-export { loginOverlay, userLogin, logOut };
+export { showLoginOverlay, loginForm, userLogin, logOut };
 
 // Fonction pour gerer la page login
-function loginOverlay() {
+function showLoginOverlay() {
 
     // Récupère les elements
     const loginOverlay = document.getElementById('loginOverlay');
@@ -41,6 +41,61 @@ function loginOverlay() {
     homeLink.addEventListener('click', function() {
         closeLoginOverlay();
     });
+}
+
+function loginForm() {
+    // Obtenez la référence de la section "loginOverlay"
+const loginOverlay = document.getElementById('loginOverlay');
+
+// Créer le titre h2
+const h2 = document.createElement('h2');
+h2.textContent = 'Login';
+loginOverlay.appendChild(h2);
+
+// Créer le formulaire
+const form = document.createElement('form');
+form.id = 'loginForm';
+
+// Créer et ajouter le champ "E-mail"
+const emailLabel = document.createElement('label');
+emailLabel.setAttribute('for', 'emailUser');
+emailLabel.textContent = 'E-mail';
+form.appendChild(emailLabel);
+
+const emailInput = document.createElement('input');
+emailInput.type = 'text';
+emailInput.id = 'emailUser';
+emailInput.name = 'email';
+emailInput.required = true;  // Marquer comme requis
+form.appendChild(emailInput);
+
+// Créer et ajouter le champ "Mot de passe"
+const passwordLabel = document.createElement('label');
+passwordLabel.setAttribute('for', 'password');
+passwordLabel.textContent = 'Mot de passe';
+form.appendChild(passwordLabel);
+
+const passwordInput = document.createElement('input');
+passwordInput.type = 'password';
+passwordInput.id = 'password';
+passwordInput.name = 'password';
+passwordInput.required = true;  // Marquer comme requis
+form.appendChild(passwordInput);
+
+// Créer et ajouter le bouton de soumission
+const submitButton = document.createElement('input');
+submitButton.type = 'submit';
+submitButton.value = 'Se connecter';
+form.appendChild(submitButton);
+
+// Créer et ajouter un élément pour afficher les erreurs
+const errorParagraph = document.createElement('p');
+errorParagraph.id = 'loginError';
+form.appendChild(errorParagraph);
+
+// Ajouter le formulaire à la section "loginOverlay"
+loginOverlay.appendChild(form);
+
 }
 
 function userLogin() {

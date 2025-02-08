@@ -1,5 +1,5 @@
-import { loginOverlay, userLogin, logOut } from "./auth.js"; 
-import { openModal, checkAuth, modalGallery } from "./modal.js"; 
+import { showLoginOverlay, loginForm, userLogin, logOut } from "./auth.js"; 
+import { openModal, checkAuth, modalGallery, modalForm } from "./modal.js"; 
 
 let worksData =[];
 
@@ -151,10 +151,82 @@ function setActiveButton(selectedButton) {
     console.log(`${selectedButton.innerText} est actif`);
 }
 
+function contactForm() {
+    
+    // Obtenez la section avec l'id "contact"
+    const contactSection = document.getElementById('contact');
+
+    // Créer le titre h2
+    const h2 = document.createElement('h2');
+    h2.textContent = 'Contact';
+    contactSection.appendChild(h2);
+
+    // Ajouter un paragraphe de description
+    const p = document.createElement('p');
+    p.textContent = 'Vous avez un projet ? Discutons-en !';
+    contactSection.appendChild(p);
+
+    // Créer le formulaire
+    const form = document.createElement('form');
+    form.action = '#';
+    form.method = 'post';
+
+    // Créer et ajouter le champ "Nom"
+    const nameLabel = document.createElement('label');
+    nameLabel.setAttribute('for', 'name');
+    nameLabel.textContent = 'Nom';
+    form.appendChild(nameLabel);
+
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.name = 'name';
+    nameInput.id = 'name';
+    form.appendChild(nameInput);
+
+    // Créer et ajouter le champ "Email"
+    const emailLabel = document.createElement('label');
+    emailLabel.setAttribute('for', 'email');
+    emailLabel.textContent = 'Email';
+    form.appendChild(emailLabel);
+
+    const emailInput = document.createElement('input');
+    emailInput.type = 'email';
+    emailInput.name = 'email';
+    emailInput.id = 'email';
+    form.appendChild(emailInput);
+
+    // Créer et ajouter le champ "Message"
+    const messageLabel = document.createElement('label');
+    messageLabel.setAttribute('for', 'message');
+    messageLabel.textContent = 'Message';
+    form.appendChild(messageLabel);
+
+    const messageTextArea = document.createElement('textarea');
+    messageTextArea.name = 'message';
+    messageTextArea.id = 'message';
+    messageTextArea.cols = 30;
+    messageTextArea.rows = 10;
+    form.appendChild(messageTextArea);
+
+    // Créer et ajouter le bouton d'envoi
+    const submitButton = document.createElement('input');
+    submitButton.type = 'submit';
+    submitButton.value = 'Envoyer';
+    form.appendChild(submitButton);
+
+    // Ajouter le formulaire à la section "contact"
+    contactSection.appendChild(form);
+
+
+}
+
+modalForm();
+loginForm();
+contactForm();
 checkAuth();
 openModal();
 logOut();
 userLogin();
-loginOverlay();
+showLoginOverlay();
 generateFilter();
 generateWorks();

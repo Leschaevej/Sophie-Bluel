@@ -10,6 +10,7 @@
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
+	<link rel="stylesheet" href="./assets/modal.css">
 	<script type="module" src="./works.js"></script>
 
 </head>
@@ -38,6 +39,9 @@
 			<p>En cas de besoin, une équipe pluridisciplinaire peut-être constituée : architecte DPLG, décorateur(trice)</p>
 		</article>
 	</section>
+	<section id="loginOverlay" class="overlay">
+		<!-- auth.js -->
+	</section>
 	<section id="portfolio">
 		<div id="mesProjets">
 			<h2>Mes Projets</h2>
@@ -49,23 +53,12 @@
 		</div>
 		<div id="modalOverlay">
 			<div id="modalContent">
-				<button id="closeModal"><i class="fa-solid fa-xmark"></i></button>
+				
 				<div class ="modalGallery">
-					<!-- works.js -->
+					<!-- modal.js -->
 				</div>
 				<div class ="modalForm">
-					<h2>Ajout photo</h2>
-					<div class ="form-container">
-						<input type="file" id="image" name="image" required />
-						<label for="title">Titre</label>
-            			<input type="text" id="title" name="title" placeholder="Titre de la photo" required />
-						<label for="category">Catégorie</label>
-            			<select id="category" name="category" required>
-                			<option value="objects">Objets</option>
-                			<option value="apartments">Appartements</option>
-                			<option value="hotels">Hôtels & Restaurants</option>
-            			</select>
-					</div>
+					<!-- modal.js -->
 				</div>
 				<input type="submit" value="Ajouter une photo" id="addPhotoButton" />
 			</div>
@@ -78,28 +71,7 @@
 		</div>
 	</section>	
 	<section id="contact">
-		<h2>Contact</h2>
-		<p>Vous avez un projet ? Discutons-en !</p>
-		<form action="#" method="post">
-			<label for="name">Nom</label>
-			<input type="text" name="name" id="name">
-			<label for="email">Email</label>
-			<input type="email" name="email" id="email">
-			<label for="message">Message</label>
-			<textarea name="message" id="message" cols="30" rows="10"></textarea>
-			<input type="submit" value="Envoyer">
-		</form>
-	</section>
-	<section id="loginOverlay" class="overlay">
-		<h2>Login</h2>
-		<form id="loginForm">
-			<label for="emailUser">E-mail</label>
-			<input type="text" id="emailUser" name="email" required>
-			<label for="password">Mot de passe</label>
-			<input type="password" id="password" name="password" required>
-			<input type="submit" value="Se connecter">
-			<p id="loginError"></p>
-		</form>
+		<!-- works.js -->
 	</section>
 </main>
 <footer>

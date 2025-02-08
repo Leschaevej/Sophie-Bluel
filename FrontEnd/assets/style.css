@@ -1,11 +1,11 @@
 /* Variables de couleurs */
 :root {
-	--main-color: #1d6154;
-	--second-color: #0e2f28;
-	--header-color: #B1663C;
+	--main-color: #1d6154;  /* Couleur principale */
+	--second-color: #0e2f28; /* Couleur secondaire */
+	--header-color: #B1663C;  /* Couleur de l'en-tête */
 }
 
-/* Reset des éléments HTML de base */
+/* Reset des éléments HTML de base : cela permet de supprimer les marges, bordures, etc., sur tous les éléments */
 html, body, div, span, p, blockquote, pre, a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var,
 b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption,
@@ -19,22 +19,24 @@ footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, a
 	vertical-align: baseline;
 }
 
+/* Style pour l'en-tête */
 header {
 	display: flex;
 	justify-content: space-between;
 }
 
+/* Style pour le body */
 body {
 	line-height: 1;
 	max-width: 1140px;
 	margin: auto;
-	font-family: 'Work Sans', sans-serif;
+	font-family: 'Work Sans', sans-serif;  /* Police générale */
 	font-size: 14px;
 }
 
 /* Structure des titres */
 h1 {
-	font-family: 'Syne', sans-serif;
+	font-family: 'Syne', sans-serif; /* Police pour h1 */
 	font-size: 22px;
 	font-weight: 800;
 	color: var(--header-color);
@@ -49,12 +51,12 @@ h1 > span {
 }
 
 h2 {
-	font-family: 'Syne', sans-serif;
+	font-family: 'Syne', sans-serif;  /* Police pour h2 */
 	font-size: 30px;
 	color: var(--main-color);
 }
 
-/* Navigation */
+/* Style de la navigation */
 nav {
 	display: flex;
 	justify-content: space-between;
@@ -86,7 +88,7 @@ li:hover {
 	color: var(--header-color);
 }
 
-/* Section introduction */
+/* Section d'introduction */
 #introduction {
 	display: flex;
 	align-items: center;
@@ -155,6 +157,7 @@ li:hover {
 #portfolio {
 	margin: 0 100px;
 }
+
 .gallery {
 	width: 100%;
 	display: grid;
@@ -170,7 +173,7 @@ li:hover {
 	margin-top: 5px;
 }
 
-/* Boutons */
+/* Style des boutons */
 input[type="submit"], #modalContent input[type="submit"] {
 	height: 50px;
 	cursor: pointer;
@@ -183,6 +186,7 @@ input[type="submit"], #modalContent input[type="submit"] {
 	display: flex;
 	justify-content: center;
 	margin: 40px 0;
+	padding: 0;
 }
 
 input[type="submit"]:hover {
@@ -193,143 +197,14 @@ input[type="submit"]:hover {
 	width: 38%;
 	height: 36px;
 	margin-top: 50px;
+	padding: 0;
 }
 
-/* Modal */
-#modalOverlay {
-	display: none;
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.5);
-	justify-content: center;
-	align-items: center;
+::placeholder {
+	color: #444444;
 }
 
-body.no-scroll {
-	overflow: hidden;
-}
-  
-#modalContent {
-	background-color: white;
-	padding: 20px;
-	border-radius: 10px;
-	width: 630px;
-	height: 688px;
-	text-align: center;
-	justify-items: center;
-}
-
-#closeModal {
-	width: 100%;
-	background: none;
-	border: none;
-	font-size: 20px;
-	cursor: pointer;
-	display: flex;
-	justify-content: flex-end;
-}
-
-.modalGallery {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-}
-
-.modalGallery h2 {
-	margin-top: 20px;
-	margin-bottom: 50px;
-	font-family:'Work Sans', sans-serif;
-	font-weight: 400;
-	font-size: 26px;
-	color: black;
-}
-
-.modalGallery .gallery-container {
-	display: flex;
-	justify-content: space-between;
-	flex-wrap: wrap;
-	row-gap: 30px;
-	margin: 0 80px;
-	padding-bottom: 50px;
-	border-bottom: 2px solid #b3b3b3;
-}
-
-.modalGallery .image-container {
-	width: 18%;
-	height: auto;
-	position: relative;
-}
-
-.modalGallery img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	object-position: center;
-}
-
-.delete-button {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	background: black;
-	border: none;
-	width: 17px;
-	height: 17px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	cursor: pointer;
-	border-radius: 3px;
-}
-
-.delete-button i {
-	display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-	font-size: 12px;
-}
-
-.delete-button:hover i {
-	color: red;
-}
-
-.modalForm {
-	flex-direction: column;
-	padding: 0 80px;
-	width: 100%;
-	box-sizing: border-box;
-}
-
-.form-container {
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	box-sizing: border-box;
-	padding-bottom: 50px;
-	border-bottom: 2px solid #b3b3b3;
-}
-
-.modalForm h2 {
-	font-family:'Work Sans', sans-serif;
-	font-weight: 400;
-	font-size: 26px;
-	color: black;
-	margin: 20px 0 50px;
-}
-
-.modalForm input[type="file"] {
-	height: 197px;
-}
-
-#category {
-	height: 50px;
-}
-
-/* Contact */
+/* Contact form */
 #contact {
 	display: flex;
 	flex-direction: column;
@@ -349,15 +224,21 @@ label {
 	margin: 30px 0 10px 0;
 }
 
+/* Contact form inputs and textareas */
 input, textarea {
 	width: 100%;
-	height: 50px;
+	height: 51px;
 	box-sizing: border-box;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 	resize: none;
 }
 
+textarea {
+    height: 174px;
+}
+
+/* Login modal overlay */
 #loginOverlay {
 	display: none;
 	position: fixed;
@@ -371,10 +252,12 @@ input, textarea {
 	margin-top: 100px;
 }
 
+/* Error message for login */
 #loginError {
 	color: red;
 }
 
+/* Footer styles */
 footer ul {
 	display: flex;
 	justify-content: flex-end;
