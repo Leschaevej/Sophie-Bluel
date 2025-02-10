@@ -1,4 +1,4 @@
-export { openModal, checkAuth, modalGallery, modalForm };
+export { openModal, checkAuth, modalGallery, modalForm, addNewWork };
 
 function checkAuth() {
     const token = localStorage.getItem("token");
@@ -15,59 +15,63 @@ function checkAuth() {
 
 // Fonction pour gérer l'ouverture et la fermeture de la modale
 function openModal() {
-    const openModalLink = document.getElementById("openModalLink");
-    const modalOverlay = document.getElementById("modalOverlay");
-    const modalContent = document.getElementById("modalContent");
-    const addPhotoButton = document.querySelector("#addPhotoButton"); // Le bouton "Ajouter une photo"
+    const openModalLink = document.querySelector("#openModalLink");
+    const modalOverlay = document.querySelector(".modalOverlay");
+    const modalContent = document.querySelector(".modalContent");
 
-    // Créer la nouvelle div backAndClose
+    let addPhotoButton = document.querySelector('.addPhotoButton');
+    if (!addPhotoButton) {
+        addPhotoButton = document.createElement('button');
+        addPhotoButton.classList.add('addPhotoButton');
+        addPhotoButton.innerHTML = 'Ajouter une photo';
+    }
+
+    if (modalContent && !modalContent.contains(addPhotoButton)) {
+        modalContent.appendChild(addPhotoButton);
+    }
+
     const backAndClose = document.createElement('div');
     backAndClose.classList.add('backAndClose');
 
-    // Créer et ajouter le bouton de retour (backButton)
     const backButton = document.createElement('button');
     backButton.classList.add('backButton');
     backButton.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
-    backButton.style.display = "none";  // Masquer au départ
     backAndClose.appendChild(backButton);
 
-    // Créer et ajouter le bouton de fermeture (closeButton)
     const closeButton = document.createElement('button');
     closeButton.classList.add('closeButton');
     closeButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
     backAndClose.appendChild(closeButton);
 
-    // Ajouter backAndClose à modalContent
-    modalContent.insertBefore(backAndClose, modalContent.firstChild); // Ajouter au début de modalContent
+    modalContent.insertBefore(backAndClose, modalContent.firstChild);
 
-    // Afficher la modale lorsqu'on clique sur "Modifier"
     openModalLink.addEventListener("click", function(event) {
         event.preventDefault();
         modalOverlay.style.display = "flex";
         document.body.classList.add("no-scroll");
 
-        // Réinitialiser l'affichage des éléments dans la modale
-        const modalGallery = document.querySelector(".modalGallery");
-        const modalForm = document.querySelector(".modalForm");
+        const modalGallery = document.querySelector(".galleryContainer");
+        const modalForm = document.querySelector(".formContainer");
 
-        // Initialement, la galerie est affichée et le formulaire est caché
-        modalGallery.style.display = "flex";
-        modalForm.style.display = "none";
+        if (modalGallery) {
+            modalGallery.style.display = "flex";
+        }
 
-        // Cacher le bouton retour lorsqu'on est sur la galerie
-        backButton.style.display = "none"; 
-        // Toujours afficher le bouton de fermeture (closeButton) à droite
-        closeButton.style.display = "block"; 
+        if (modalForm) {
+            modalForm.style.display = "none";
+        }
+
+        backButton.style.display = "none";
+        closeButton.style.display = "block";
+        addPhotoButton.style.display = "inline-block";
     });
 
-    // Fermer la modale lorsqu'on clique sur le bouton "X"
     closeButton.addEventListener("click", function() {
         modalOverlay.style.display = "none";
         document.body.classList.remove("no-scroll");
         resetFormFields();
     });
 
-    // Fermer la modale si l'utilisateur clique en dehors de la zone de contenu
     modalOverlay.addEventListener("click", function(event) {
         if (event.target === modalOverlay) {
             modalOverlay.style.display = "none";
@@ -76,54 +80,47 @@ function openModal() {
         }
     });
 
-    // Lier le bouton "Ajouter une photo" à la fonction showPhotoForm
     addPhotoButton.addEventListener("click", function() {
-        showPhotoForm();
-    });
-
-    // Ajouter un événement au bouton retour pour revenir à la galerie
-    backButton.addEventListener('click', function() {
-        const modalGallery = document.querySelector(".modalGallery");
-        const modalForm = document.querySelector(".modalForm");
-
-        // Afficher la galerie et masquer le formulaire
-        modalGallery.style.display = "flex";
-        modalForm.style.display = "none";
-
-        // Cacher le bouton retour
-        backButton.style.display = "none";
+        showPhotoForm();  // Afficher la modale du formulaire
     });
 }
 
 function showPhotoForm() {
-    // Masquer la galerie et afficher le formulaire
-    const modalGallery = document.querySelector(".modalGallery");
-    const modalForm = document.querySelector(".modalForm");
+    const modalGallery = document.querySelector(".galleryContainer");
+    const modalForm = document.querySelector(".formContainer");
     const backButton = document.querySelector(".backButton");
 
-    modalGallery.style.display = "none";  // Cache la galerie
-    modalForm.style.display = "flex";     // Affiche le formulaire
+    if (modalGallery && modalForm) {
+        modalGallery.style.display = "none";  // Cache la galerie
+        modalForm.style.display = "flex";     // Affiche le formulaire
+    }
 
-    // Afficher le bouton retour
-    backButton.style.display = "block";
+    if (backButton) backButton.style.display = "block";
+
+    backButton.addEventListener('click', function() {
+        if (modalGallery && modalForm) {
+            modalGallery.style.display = "flex";  // Afficher la galerie
+            modalForm.style.display = "none";     // Masquer le formulaire
+        }
+
+        if (backButton) backButton.style.display = "none";  // Cacher le bouton retour
+    });
 }
+
 
 function modalGallery() {
     // Sélectionne le conteneur de la galerie dans la modale
-    const modalGallery = document.querySelector(".modalGallery");
+    const modalGallery = document.querySelector(".galleryContainer");
     modalGallery.innerHTML = ''; // Nettoie la galerie avant de la remplir à nouveau
 
-    // Crée le titre de la galerie
-    const modalGalleryTitle = document.createElement('div');
-    modalGalleryTitle.className = "modal-Gallery-title";
+    // Crée le titre h2 sans envelopper dans une div
     const galleryTitle = document.createElement('h2');
     galleryTitle.textContent = "Galerie photo";
-    modalGalleryTitle.appendChild(galleryTitle);
-    modalGallery.appendChild(modalGalleryTitle);
+    modalGallery.appendChild(galleryTitle); // Ajoute directement le titre à modalGallery
 
     // Crée un conteneur pour les images
     const galleryContainer = document.createElement('div');
-    galleryContainer.className = "gallery-container";
+    galleryContainer.className = "modalGallery";
 
     // Récupère la galerie principale et clone son contenu
     const mainGallery = document.querySelector('.gallery');
@@ -156,7 +153,7 @@ function modalGallery() {
 
 function modalForm() {
     // Obtenez la référence de la div "modalForm"
-    const modalForm = document.querySelector('.modalForm');
+    const modalForm = document.querySelector('.formContainer');
 
     // Créer le titre h2
     const h2 = document.createElement('h2');
@@ -165,12 +162,12 @@ function modalForm() {
 
     // Créer le conteneur du formulaire
     const formContainer = document.createElement('div');
-    formContainer.classList.add('form-container');
+    formContainer.classList.add('modalForm');
     modalForm.appendChild(formContainer);
 
     // Créer la div pour l'ajout de l'image
     const addImageInput = document.createElement('div');
-    addImageInput.classList.add('add-image-input');
+    addImageInput.classList.add('addImageInput');
     formContainer.appendChild(addImageInput);
 
     // Ajouter l'icône
@@ -183,15 +180,27 @@ function modalForm() {
     imageInput.type = 'file';
     imageInput.id = 'image';
     imageInput.name = 'image';
-    imageInput.accept = ".jpg, .jpeg, .png"
-    imageInput.placeholder = '+ Ajouter photo';
+    imageInput.accept = ".jpg, .jpeg, .png";
+    imageInput.placeholder = 'Ajouter photo';
     imageInput.required = true;
+    imageInput.style.display = 'none'; // Cacher l'input de type file
     addImageInput.appendChild(imageInput);
 
-    // Verifi la taille de l'image
-    document.getElementById('image').addEventListener('change', function(event) {
+    // Créer un bouton personnalisé pour ajouter la photo
+    const customButton = document.createElement('button');
+    customButton.textContent = 'Ajouter photo';
+    customButton.classList.add('customAddPhotoButton');
+    addImageInput.appendChild(customButton);
+
+    // Ajouter un événement au bouton pour déclencher l'input file
+    customButton.addEventListener('click', function() {
+        imageInput.click(); // Ouvrir le sélecteur de fichier
+    });
+
+    // Vérifier la taille de l'image
+    imageInput.addEventListener('change', function(event) {
         const file = event.target.files[0];
-        
+
         if (file) {
             const maxSize = 4 * 1024 * 1024; // 4 Mo en octets
 
@@ -314,7 +323,7 @@ function resetFormFields() {
     document.getElementById('category').selectedIndex = 0;  
 
     // Réafficher l'icône et le texte de l'input image
-    const addImageInput = document.querySelector('.add-image-input');
+    const addImageInput = document.querySelector('.addImageInput');
     const previewContainer = document.getElementById('imagePreview');
     const icon = addImageInput.querySelector('i');
     const input = addImageInput.querySelector('input');
@@ -324,4 +333,42 @@ function resetFormFields() {
     if (icon) icon.style.display = 'block'; // Réafficher l'icône
     if (input) input.style.display = 'block'; // Réafficher l'input
     if (infoText) infoText.style.display = 'block'; // Réafficher le texte "jpg, png : 4mo max"
+}
+
+function addNewWork() {
+    const modalForm = document.querySelector(".modalForm");
+
+    if (!modalForm) {
+        console.error("Formulaire modalForm non trouvé");
+        return;
+    }
+
+    modalForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append("image", document.querySelector("#image").files[0]);
+        formData.append("title", document.querySelector("#title").value);
+        formData.append("category", document.querySelector("#category").value);
+
+        try {
+            const response = await fetch("http://localhost:5678/api/works", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("token"),
+                },
+            });
+
+            if (response.ok) {
+                alert("Work ajouté avec succès !");
+                resetFormFields();
+                modalGallery(); 
+            } else {
+                alert("Erreur lors de l'ajout du work.");
+            }
+        } catch (error) {
+            console.error("Erreur :", error);
+        }
+    });
 }

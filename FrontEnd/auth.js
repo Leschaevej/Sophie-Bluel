@@ -2,11 +2,10 @@ export { showLoginOverlay, loginForm, userLogin, logOut };
 
 // Fonction pour gerer la page login
 function showLoginOverlay() {
-
-    // Récupère les elements
+    // Récupère les éléments
     const loginOverlay = document.getElementById('loginOverlay');
-    const loginLink = document.getElementById('loginLink'); 
-    const homeLink = document.getElementById('homeLink'); 
+    const loginLink = document.getElementById('loginLink');
+    const homeLink = document.getElementById('homeLink');
 
     // Variables pour gérer le défilement et la largeur de la barre de défilement
     let scrollPosition = 0;
@@ -16,28 +15,28 @@ function showLoginOverlay() {
     loginLink.addEventListener('click', function(event) {
         event.stopPropagation();
 
-        // Force la page a remonter et empeche le defilement
+        // Force la page à remonter et empêche le défilement
         scrollPosition = window.scrollY;
         document.body.style.paddingRight = `${scrollbarWidth}px`;
         document.body.style.overflow = 'hidden';
-        loginOverlay.style.display = 'flex';
+        loginOverlay.style.display = 'flex';  // Affiche l'overlay
     });
 
     // Fonction pour fermer l'overlay de connexion
     function closeLoginOverlay() {
         loginOverlay.style.display = 'none';
-        document.body.style.overflow = ''; 
+        document.body.style.overflow = '';
         document.body.style.paddingRight = '';
     }
 
-    // Ferme l'overlay quand on clique a coter
+    // Ferme l'overlay quand on clique à côté
     loginOverlay.addEventListener('click', function(event) {
         if (event.target === loginOverlay) {
             closeLoginOverlay();
         }
     });
 
-    // Ferme également l'overlay quand onclique dans le header
+    // Ferme également l'overlay quand on clique dans le header
     homeLink.addEventListener('click', function() {
         closeLoginOverlay();
     });
@@ -83,9 +82,10 @@ passwordInput.required = true;  // Marquer comme requis
 form.appendChild(passwordInput);
 
 // Créer et ajouter le bouton de soumission
-const submitButton = document.createElement('input');
-submitButton.type = 'submit';
-submitButton.value = 'Se connecter';
+const submitButton = document.createElement('button');
+submitButton.type = 'button';
+submitButton.classList.add('loginButton');
+submitButton.textContent = 'Se connecter';
 form.appendChild(submitButton);
 
 // Créer et ajouter un élément pour afficher les erreurs
@@ -99,97 +99,90 @@ loginOverlay.appendChild(form);
 }
 
 function userLogin() {
-    // Ecoute l'envoie du formulaire
-    document.getElementById("loginForm").addEventListener("submit", async function(event) {
-        event.preventDefault();
-        console.log("Formulaire soumis");
+    // Ajoute un événement "click" sur le bouton de connexion
+    const loginButton = document.querySelector(".loginButton");
 
-        // Récupère les valeurs des champs email et mot de passe
-        const email = document.getElementById("emailUser").value;
-        const password = document.getElementById("password").value;
+    if (loginButton) {
+        loginButton.addEventListener("click", async function() {
+            // Récupère les valeurs des champs email et mot de passe
+            const email = document.getElementById("emailUser").value;
+            const password = document.getElementById("password").value;
 
-        // Gére le message d'erreur
-        const errorMessage = document.getElementById("loginError");
-        errorMessage.style.display = "none";
+            // Gère le message d'erreur
+            const errorMessage = document.getElementById("loginError");
+            errorMessage.style.display = "none"; // Cache l'ancienne erreur
 
-        // Crée un objet contenant les informations de connexion
-        const loginData = {
-            email: email,
-            password: password
-        };
+            // Crée un objet contenant les informations de connexion
+            const loginData = { email, password };
 
-        try {
-            // Récupération des données depuis l'API
-            const response = await fetch("http://localhost:5678/api/users/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(loginData)
-            });
+            try {
+                // Récupération des données depuis l'API
+                const response = await fetch("http://localhost:5678/api/users/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(loginData)
+                });
 
-            // Vérifie si la réponse est correcte
-            if (!response.ok) {
-                throw new Error("");
+                // Vérifie si la réponse est correcte
+                if (!response.ok) {
+                    throw new Error("Email ou mot de passe incorrect");
+                }
+
+                // Traite la réponse
+                const data = await response.json();
+                console.log("Connexion réussie :", data);
+
+                // Stocke les logs dans localStorage
+                let logs = JSON.parse(localStorage.getItem("logs")) || [];
+                logs.push({ time: new Date().toLocaleString(), message: "Connexion réussie", data: data });
+                localStorage.setItem("logs", JSON.stringify(logs));
+
+                // Stocke le token dans sessionStorage
+                sessionStorage.setItem("token", data.token);
+
+                // Ferme l'overlay de connexion après la réussite de la connexion
+                closeLoginOverlay();
+
+                // Redirige l'utilisateur vers la page d'accueil après une connexion réussie
+                window.location.href = "index.html";
+
+            } catch (error) {
+                console.error("Erreur :", error.message || "Une erreur est survenue");
+
+                // Stocke l'erreur dans localStorage
+                let logs = JSON.parse(localStorage.getItem("logs")) || [];
+                logs.push({ time: new Date().toLocaleString(), message: "Erreur : " + (error.message || "Email ou mot de passe incorrect") });
+                localStorage.setItem("logs", JSON.stringify(logs));
+
+                // Affiche l'erreur sous le formulaire
+                errorMessage.textContent = error.message || "Email ou mot de passe incorrect";
+                errorMessage.style.display = "block";
             }
-
-            // Traite la réponse
-            const data = await response.json();
-            console.log("Connexion réussie :", data);
-
-            // Stocke les logs dans localStorage
-            let logs = JSON.parse(localStorage.getItem("logs")) || [];
-            logs.push({ time: new Date().toLocaleString(), message: "Connexion réussie", data: data });
-            localStorage.setItem("logs", JSON.stringify(logs));
-
-            // Stocke le token dans localStorage
-            sessionStorage.setItem("token", data.token);
-
-            // Redirige l'utilisateur vers la page d'accueil après une connexion réussie
-            window.location.href = "index.html"; 
-
-        }catch (error) {
-            console.error("Erreur :", error.message || "Une erreur est survenue");
-        
-            // Stocke l'erreur dans localStorage
-            let logs = JSON.parse(localStorage.getItem("logs")) || [];
-            logs.push({ time: new Date().toLocaleString(), message: "Erreur : " + (error.message || "Email ou mot de passe incorrect") });
-            localStorage.setItem("logs", JSON.stringify(logs));
-        
-            // Affiche l'erreur sous le formulaire
-            errorMessage.textContent = error.message || "Email ou mot de passe incorrect";
-            errorMessage.style.display = "block";
-        }
-        
-    });
-
-    // Afficher les logs existants au chargement de la page
-    window.addEventListener("load", function() {
-
-        // Récupère les logs stockés dans localStorage
-        let logs = JSON.parse(localStorage.getItem("logs")) || [];
-
-        console.log("Historique des logs :");
-        logs.forEach(log => {
-        const timestamp = new Date().toLocaleString();
-        console.log(`[${timestamp}] ${log.message}`, log.data || "");
         });
-    });
-
-    window.addEventListener("beforeunload", function () {
-        localStorage.removeItem("token"); // Supprime le token à la fermeture ou au rechargement de la page
-    });
+    }
 }
+
+
+// Fonction pour fermer l'overlay
+function closeLoginOverlay() {
+    const overlay = document.getElementById("loginOverlay");
+    if (overlay) {
+        overlay.style.display = "none";  // Cache l'overlay de connexion
+    }
+}
+
 
 function logOut () {
     document.addEventListener("DOMContentLoaded", function () {
         const loginLink = document.getElementById("loginLink");
         const logoutLink = document.getElementById("logoutLink");
         const openModalLink = document.getElementById("openModalLink");
-    
+
         function checkAuth() {
             const token = sessionStorage.getItem("token");
-    
+
             if (token) {
                 // L'utilisateur est connecté
                 loginLink.style.display = "none";
@@ -202,15 +195,14 @@ function logOut () {
                 openModalLink.style.display = "none"; // Masquer le lien "Modifier"
             }
         }
-    
+
         // Vérifier l'authentification au chargement
         checkAuth();
-    
+
         // Ajout de l'événement pour se déconnecter
         logoutLink.addEventListener("click", function () {
             sessionStorage.removeItem("token");
             checkAuth();  // Re-vérifier l'état de connexion après la déconnexion
         });
-    }); 
+    });
 }
-

@@ -1,7 +1,15 @@
 import { showLoginOverlay, loginForm, userLogin, logOut } from "./auth.js"; 
-import { openModal, checkAuth, modalGallery, modalForm } from "./modal.js"; 
+import { openModal, checkAuth, modalGallery, modalForm, addNewWork } from "./modal.js"; 
 
 let worksData =[];
+// works.js
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Code qui s'exécute après le chargement du DOM.
+});
+
+// Autres fonctions et logique du script
+
 
 // Fonction asynchrone pour générer les travaux à partir de l'API
 async function generateWorks() {
@@ -208,18 +216,33 @@ function contactForm() {
     messageTextArea.rows = 10;
     form.appendChild(messageTextArea);
 
-    // Créer et ajouter le bouton d'envoi
-    const submitButton = document.createElement('input');
-    submitButton.type = 'submit';
-    submitButton.value = 'Envoyer';
-    form.appendChild(submitButton);
+    // Créer et ajouter le bouton d'envoi (bouton de type "button")
+    const submitButton = document.createElement('button');
+    submitButton.type = 'button'; // Spécifie que c'est un bouton, pas un bouton de soumission
+    submitButton.textContent = 'Envoyer'; // Texte du bouton
+
+    // Ajouter la classe contactButton au bouton
+    submitButton.classList.add('contactButton');
+
+    // Ajouter un événement de clic pour envoyer le formulaire
+    submitButton.addEventListener('click', function() {
+        // Ici, tu peux ajouter une fonction pour gérer l'envoi du formulaire
+        // Exemple : envoyer le formulaire via une requête AJAX ou valider les champs avant l'envoi
+        if (form.checkValidity()) {
+            // Si le formulaire est valide, tu peux l'envoyer par exemple avec fetch
+            alert('Formulaire envoyé !');
+        } else {
+            alert('Veuillez remplir tous les champs correctement.');
+        }
+    });
+
+    form.appendChild(submitButton);  // Ajouter le bouton d'envoi au formulaire
 
     // Ajouter le formulaire à la section "contact"
     contactSection.appendChild(form);
-
-
 }
 
+addNewWork();
 modalForm();
 loginForm();
 contactForm();
