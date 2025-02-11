@@ -1,15 +1,7 @@
 import { showLoginOverlay, loginForm, userLogin, logOut } from "./auth.js"; 
-import { openModal, checkAuth, modalGallery, modalForm, addNewWork } from "./modal.js"; 
+import { openModal, checkAuth, modalGallery, modalForm, } from "./modal.js"; 
 
 let worksData =[];
-// works.js
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Code qui s'exécute après le chargement du DOM.
-});
-
-// Autres fonctions et logique du script
-
 
 // Fonction asynchrone pour générer les travaux à partir de l'API
 async function generateWorks() {
@@ -31,16 +23,15 @@ async function generateWorks() {
 
     // Récupération de l'élément du DOM qui accueillera les travaux
     const sectionGallery = document.querySelector(".gallery");
-    const modal = document.querySelector(".modalGallery");
 
     // Vider la galerie et la modal avant de les remplir
     sectionGallery.innerHTML = '';
 
     // Boucle sur les travaux récupérées pour les afficher dans la galerie
     worksData.forEach(article => {
-        // Création d’une balise dédiée pour l'article
-        const worksElement = document.createElement("article");
-        worksElement.dataset.id = article.id;
+        // Création d’une div pour contenir l'image
+        const imageContainer = document.createElement("div");
+        imageContainer.classList.add("imageContainer"); // Ajouter la classe imageContainer
 
         // Création des balises 
         const imageElement = document.createElement("img");
@@ -49,12 +40,12 @@ async function generateWorks() {
         const nomElement = document.createElement("p");
         nomElement.innerText = article.title;
 
-        // Ajout des éléments créés dans l'élément article
-        worksElement.appendChild(imageElement);
-        worksElement.appendChild(nomElement);
+        // Ajout des éléments créés dans la div
+        imageContainer.appendChild(imageElement);
+        imageContainer.appendChild(nomElement);
 
-        // Ajout de l'élément article à la galerie
-        sectionGallery.appendChild(worksElement);        
+        // Ajout de l'élément imageContainer à la galerie
+        sectionGallery.appendChild(imageContainer);        
     });
     modalGallery();
 }
@@ -115,34 +106,46 @@ function generateFilter() {
 }
 
 // Fonction pour mettre à jour la galerie avec les travaux filtrées
-function updateGallery(filteredWorks) {
+function updateGallery() {
+    const mainGallery = document.querySelector(".main-gallery-container");
 
-    // Récupération de l'élément du DOM qui accueillera les travaux
-    const sectionGallery = document.querySelector(".gallery");
-    sectionGallery.innerHTML = '';
+    // Réinitialiser la galerie (vider le contenu précédent)
+    mainGallery.innerHTML = '';
 
-    // Boucle sur les œuvres filtrées pour les afficher
-    filteredWorks.forEach(article => {
-        
-        // Création d’une balise dédiée
-        const worksElement = document.createElement("article");
-        worksElement.dataset.id = article.id;
+    // Récupérer les œuvres restantes depuis l'API
+    fetch('http://localhost:5678/api/works')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(work => {
+                // Créer un conteneur pour chaque image
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'image-container';
 
-        // Création des balises 
-        const imageElement = document.createElement("img");
-        imageElement.src = article.imageUrl;
-        imageElement.alt = article.title;
-        const nomElement = document.createElement("p");
-        nomElement.innerText = article.title;
+                // Créer l'image et ajouter l'ID dans le data-id
+                const img = document.createElement('img');
+                img.src = work.imageUrl;
+                img.alt = work.title;
+                img.dataset.workId = work.id;
 
-        // Ajout des éléments créés dans l'élément article
-        worksElement.appendChild(imageElement);
-        worksElement.appendChild(nomElement);
+                // Ajouter l'image au conteneur
+                imageContainer.appendChild(img);
 
-        // Ajout de l'élément article à la galerie
-        sectionGallery.appendChild(worksElement);
-    });
+                // Ajouter le conteneur à la galerie principale
+                mainGallery.appendChild(imageContainer);
+
+                // Ajouter un événement de suppression
+                img.addEventListener('click', function() {
+                    const workId = img.dataset.workId;
+                    deleteWorks(workId, imageContainer); // Supprimer l'image de la galerie
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération des œuvres:', error);
+        });
 }
+
+
 
 function setActiveButton(selectedButton) {
 
@@ -242,7 +245,6 @@ function contactForm() {
     contactSection.appendChild(form);
 }
 
-addNewWork();
 modalForm();
 loginForm();
 contactForm();

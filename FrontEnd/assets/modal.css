@@ -62,8 +62,9 @@ body.no-scroll {
 /* Modal Gallery */
 .galleryContainer {
     flex-direction: column;
+    align-items: center;
     margin-top: 36px;
-	width: 470px;
+    width: 470px;
 }
 
 .galleryContainer h2 {
@@ -76,17 +77,15 @@ body.no-scroll {
 }
 
 .modalGallery {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    row-gap: 30px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 25px 10px;
     padding-bottom: 50px;
     border-bottom: 2px solid #b3b3b3;
+    width: 100%;
 }
 
 .modalGallery .image-container {
-    width: 18%;
-    height: auto;
     position: relative;
     box-sizing: border-box;
 }
@@ -125,14 +124,18 @@ body.no-scroll {
     color: red;
 }
 
+.showFormButton {
+    width: 237px;
+    margin-top: 40px;
+}
+
 
 /* Modal Form */
 .formContainer {
 	display: flex;
 	flex-direction: column;
+    align-items: center;
 	width: 470px;
-	border-bottom: 2px solid #b3b3b3;
-	padding-bottom: 50px;
 }
 
 .formContainer h2 {
@@ -147,6 +150,9 @@ body.no-scroll {
 .modalForm {
 	display: flex;
 	flex-direction: column;
+    width: 470px;
+	padding-bottom: 50px;
+	border-bottom: 2px solid #b3b3b3;
 }
 
 .addImageInput {
@@ -154,7 +160,7 @@ body.no-scroll {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-    height: 185px;
+    height: 191px;
     background-color: #e8f1f6;
 }
 
@@ -162,6 +168,10 @@ body.no-scroll {
 	font-size: 76px;
 	margin-bottom: 10px;
 	color: #b9c5cc;
+}
+
+input[type="file"]#image {
+    display: none;
 }
 
 .addImageInput button {
@@ -185,6 +195,7 @@ body.no-scroll {
 
 /* Style de l'image dans la prévisualisation */
 #imagePreview img {
+    display: block;
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
@@ -218,7 +229,7 @@ input {
     padding: 10px;
 }
 
-.addPhotoButton {
+.addNewWorkButton {
 	width: 237px;
 	margin-top: 40px;
 }

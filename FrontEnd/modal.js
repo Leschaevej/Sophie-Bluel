@@ -1,4 +1,4 @@
-export { openModal, checkAuth, modalGallery, modalForm, addNewWork };
+export { openModal, checkAuth, modalGallery, modalForm,};
 
 function checkAuth() {
     const token = localStorage.getItem("token");
@@ -18,17 +18,6 @@ function openModal() {
     const openModalLink = document.querySelector("#openModalLink");
     const modalOverlay = document.querySelector(".modalOverlay");
     const modalContent = document.querySelector(".modalContent");
-
-    let addPhotoButton = document.querySelector('.addPhotoButton');
-    if (!addPhotoButton) {
-        addPhotoButton = document.createElement('button');
-        addPhotoButton.classList.add('addPhotoButton');
-        addPhotoButton.innerHTML = 'Ajouter une photo';
-    }
-
-    if (modalContent && !modalContent.contains(addPhotoButton)) {
-        modalContent.appendChild(addPhotoButton);
-    }
 
     const backAndClose = document.createElement('div');
     backAndClose.classList.add('backAndClose');
@@ -63,7 +52,6 @@ function openModal() {
 
         backButton.style.display = "none";
         closeButton.style.display = "block";
-        addPhotoButton.style.display = "inline-block";
     });
 
     closeButton.addEventListener("click", function() {
@@ -79,10 +67,6 @@ function openModal() {
             resetFormFields();
         }
     });
-
-    addPhotoButton.addEventListener("click", function() {
-        showPhotoForm();  // Afficher la modale du formulaire
-    });
 }
 
 function showPhotoForm() {
@@ -91,84 +75,147 @@ function showPhotoForm() {
     const backButton = document.querySelector(".backButton");
 
     if (modalGallery && modalForm) {
-        modalGallery.style.display = "none";  // Cache la galerie
-        modalForm.style.display = "flex";     // Affiche le formulaire
+        modalGallery.style.display = "none";
+        modalForm.style.display = "flex";
     }
 
     if (backButton) backButton.style.display = "block";
 
     backButton.addEventListener('click', function() {
         if (modalGallery && modalForm) {
-            modalGallery.style.display = "flex";  // Afficher la galerie
-            modalForm.style.display = "none";     // Masquer le formulaire
+            modalGallery.style.display = "flex";
+            modalForm.style.display = "none";
         }
 
-        if (backButton) backButton.style.display = "none";  // Cacher le bouton retour
+        if (backButton) backButton.style.display = "none";
     });
 }
-
 
 function modalGallery() {
     // Sélectionne le conteneur de la galerie dans la modale
     const modalGallery = document.querySelector(".galleryContainer");
-    modalGallery.innerHTML = ''; // Nettoie la galerie avant de la remplir à nouveau
+    modalGallery.innerHTML = ''; // Effacer la galerie existante
 
     // Crée le titre h2 sans envelopper dans une div
     const galleryTitle = document.createElement('h2');
     galleryTitle.textContent = "Galerie photo";
-    modalGallery.appendChild(galleryTitle); // Ajoute directement le titre à modalGallery
+    modalGallery.appendChild(galleryTitle);
 
     // Crée un conteneur pour les images
     const galleryContainer = document.createElement('div');
     galleryContainer.className = "modalGallery";
 
-    // Récupère la galerie principale et clone son contenu
-    const mainGallery = document.querySelector('.gallery');
-    
-    const galleryClone = mainGallery.cloneNode(true);
+    // Appel fetch pour récupérer les œuvres depuis l'API
+    fetch('http://localhost:5678/api/works')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(work => {
+                // Crée un conteneur pour chaque image
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'image-container';
 
-    // Récupère chaque image de la galerie clonée
-    const images = galleryClone.querySelectorAll('img');
-        
-    images.forEach((img) => {
-        // Crée un conteneur pour chaque image
-        const imageContainer = document.createElement('div');
-        imageContainer.className = 'image-container';
+                // Crée l'image et ajoute l'ID dans le data-id
+                const img = document.createElement('img');
+                img.src = work.imageUrl; // Remplacer avec l'URL de l'image récupérée depuis l'API
+                img.alt = work.title; // Titre de l'œuvre
+                img.dataset.workId = work.id;  // ID de l'œuvre
 
-        // Ajoute l'image clonée
-        const clonedImage = img.cloneNode(true);
-        imageContainer.appendChild(clonedImage);
+                // Ajoute l'image au conteneur
+                imageContainer.appendChild(img);
 
-        // Crée un bouton de suppression pour chaque image
-        const deleteButton = document.createElement('button');
-        deleteButton.className = 'delete-button';
-        deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
-        imageContainer.appendChild(deleteButton);
-        galleryContainer.appendChild(imageContainer)
-    });
-    
+                // Crée un bouton de suppression pour chaque image
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-button';
+                deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+                imageContainer.appendChild(deleteButton);
+
+                // Ajoute l'image au container principal
+                galleryContainer.appendChild(imageContainer);
+
+                deleteButton.addEventListener('click', function() {
+                    const workId = img.dataset.workId;  // Récupère l'ID de l'œuvre
+                    deleteWorks(workId, imageContainer); // Appel de la fonction deleteWorks pour supprimer l'œuvre
+                });
+                
+            });
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération des œuvres:', error);
+        });
+
     // Ajoute le wrapper des images dans la modale
     modalGallery.appendChild(galleryContainer);
-};
+
+    // Créer le bouton "Ajouter une photo" dans la galerie
+    let showFormButton = document.querySelector('.showFormButton');
+    if (!showFormButton) {
+        showFormButton = document.createElement('button');
+        showFormButton.classList.add('showFormButton');
+        showFormButton.innerHTML = 'Ajouter une photo';
+    }
+
+    // Ajouter le bouton "Ajouter une photo" dans la modalGallery
+    if (!modalGallery.contains(showFormButton)) {
+        modalGallery.appendChild(showFormButton);
+    }
+
+    // Ajouter un événement pour afficher le formulaire d'ajout de photo
+    showFormButton.addEventListener("click", function() {
+        showPhotoForm();
+    });
+}
+
+function deleteWorks(workId, imageContainer) {
+    fetch(`http://localhost:5678/api/works/${workId}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log("Work supprimé avec succès");
+
+            // Retirer l'élément de la galerie modale
+            imageContainer.remove();  // Retirer l'élément DOM sans recharger la page
+
+            // Retirer l'élément de la galerie principale
+            const mainGallery = document.querySelector('.main-gallery');
+            if (mainGallery) {
+                const workToRemove = mainGallery.querySelector(`[data-work-id='${workId}']`);
+                if (workToRemove) {
+                    workToRemove.remove();
+                }
+            }
+        } else {
+            console.error("Erreur lors de la suppression du work");
+            alert("Une erreur est survenue lors de la suppression du work.");
+        }
+    })
+    .catch(error => {
+        console.error("Erreur lors de la requête de suppression:", error);
+        alert("Une erreur est survenue.");
+    });
+}
 
 function modalForm() {
-    // Obtenez la référence de la div "modalForm"
-    const modalForm = document.querySelector('.formContainer');
+    // Obtenez la référence de la div "formContainer"
+    const formContainer = document.querySelector('.formContainer');
 
     // Créer le titre h2
     const h2 = document.createElement('h2');
     h2.textContent = 'Ajout photo';
-    modalForm.appendChild(h2);
+    formContainer.appendChild(h2);
 
     // Créer le conteneur du formulaire
-    const formContainer = document.createElement('div');
-    formContainer.classList.add('modalForm');
-    modalForm.appendChild(formContainer);
+    const modalFormContainer = document.createElement('div');
+    modalFormContainer.classList.add('modalForm');
+    formContainer.appendChild(modalFormContainer);
 
     // Créer la div pour l'ajout de l'image
     const addImageInput = document.createElement('div');
     addImageInput.classList.add('addImageInput');
-    formContainer.appendChild(addImageInput);
+    modalFormContainer.appendChild(addImageInput);
 
     // Ajouter l'icône
     const icon = document.createElement('i');
@@ -216,37 +263,39 @@ function modalForm() {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
-
+    
             reader.onload = function (e) {
                 console.log('Image chargée :', e.target.result); // Vérifiez si l'image est correctement lue
-
+    
                 // Vider le conteneur previewContainer avant d'ajouter la prévisualisation
                 previewContainer.innerHTML = ''; // Effacer le contenu du conteneur
-
+    
                 // Créer une image pour afficher la prévisualisation
                 const img = document.createElement('img');
                 img.src = e.target.result;
                 img.alt = 'Image prévisualisée';
-
+    
                 // Ajoutez l'image au conteneur de prévisualisation
                 previewContainer.appendChild(img);
-
+    
                 // Cacher l'icône, l'input et le texte dans .add-image-input
                 const icon = addImageInput.querySelector('i');
                 const input = addImageInput.querySelector('input');
                 const infoText = addImageInput.querySelector('p');
-
+                const customButton = addImageInput.querySelector('.customAddPhotoButton'); // Sélectionner le bouton
+    
                 if (icon) icon.style.display = 'none';
                 if (input) input.style.display = 'none';
                 if (infoText) infoText.style.display = 'none';
+                if (customButton) customButton.style.display = 'none'; // Cacher le bouton
             };
-
+    
             // Lire le fichier sélectionné
             reader.readAsDataURL(file);
         } else {
             console.log('Aucun fichier sélectionné');
         }
-    });
+    });  
 
     // Ajouter un conteneur pour afficher la prévisualisation de l'image
     const previewContainer = document.createElement('div');
@@ -262,7 +311,7 @@ function modalForm() {
     const titleLabel = document.createElement('label');
     titleLabel.setAttribute('for', 'title');
     titleLabel.textContent = 'Titre';
-    formContainer.appendChild(titleLabel);
+    modalFormContainer.appendChild(titleLabel);
 
     const titleInput = document.createElement('input');
     titleInput.type = 'text';
@@ -270,19 +319,35 @@ function modalForm() {
     titleInput.name = 'title';
     titleInput.required = true;
     titleInput.placeholder = 'Ajouter un titre';
-    formContainer.appendChild(titleInput);
+    modalFormContainer.appendChild(titleInput);
 
     // Créer et ajouter le champ "Catégorie"
     const categoryLabel = document.createElement('label');
     categoryLabel.setAttribute('for', 'category');
     categoryLabel.textContent = 'Catégorie';
-    formContainer.appendChild(categoryLabel);
+    modalFormContainer.appendChild(categoryLabel);
 
     const categorySelect = document.createElement('select');
     categorySelect.id = 'category';
     categorySelect.name = 'category';
     categorySelect.required = true;
-    formContainer.appendChild(categorySelect);
+    modalFormContainer.appendChild(categorySelect);
+
+    // Créer un bouton "Ajouter le work" dans la formContainer
+    let addNewWorkButton = document.querySelector('.addNewWorkButton');
+    if (!addNewWorkButton) {
+        addNewWorkButton = document.createElement('button');
+        addNewWorkButton.classList.add('addNewWorkButton');
+        addNewWorkButton.innerHTML = 'Valider';
+    }
+
+    // Ajouter le bouton "Ajouter le work" dans la div formContainer
+    formContainer.appendChild(addNewWorkButton);
+
+    // Ajouter un événement au bouton pour soumettre le formulaire
+    addNewWorkButton.addEventListener('click', function() {
+        addNewWork(); // Appeler la fonction pour soumettre le formulaire
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
         const categorySelect = document.getElementById('category');
@@ -328,47 +393,65 @@ function resetFormFields() {
     const icon = addImageInput.querySelector('i');
     const input = addImageInput.querySelector('input');
     const infoText = addImageInput.querySelector('p');
+    const customButton = addImageInput.querySelector('.customAddPhotoButton'); // Sélectionner le bouton
 
     if (previewContainer) previewContainer.innerHTML = ''; // Supprimer l'image prévisualisée
     if (icon) icon.style.display = 'block'; // Réafficher l'icône
-    if (input) input.style.display = 'block'; // Réafficher l'input
+    if (input) input.style.display = 'none'; // Cacher l'input
     if (infoText) infoText.style.display = 'block'; // Réafficher le texte "jpg, png : 4mo max"
+    if (customButton) customButton.style.display = 'inline-block'; // Réafficher le bouton
 }
 
 function addNewWork() {
-    const modalForm = document.querySelector(".modalForm");
+    // Récupérer les valeurs du formulaire
+    const imageInput = document.querySelector('#image');
+    const titleInput = document.querySelector('#title');
+    const categorySelect = document.querySelector('#category');
 
-    if (!modalForm) {
-        console.error("Formulaire modalForm non trouvé");
-        return;
+    const imageFile = imageInput.files[0]; // Récupérer l'image choisie
+    const title = titleInput.value; // Récupérer le titre
+    const categoryId = categorySelect.value; // Récupérer la catégorie
+
+    // Vérifier que tous les champs sont remplis
+    if (!imageFile || !title || !categoryId) {
+        alert("Tous les champs doivent être remplis !");
+        return; // Si un champ est manquant, ne pas envoyer la requête
     }
 
-    modalForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
+    // Créer un objet FormData pour envoyer les données
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    formData.append('title', title);
+    formData.append('category', categoryId);
 
-        const formData = new FormData();
-        formData.append("image", document.querySelector("#image").files[0]);
-        formData.append("title", document.querySelector("#title").value);
-        formData.append("category", document.querySelector("#category").value);
+    // Envoi des données vers l'API
+    fetch('http://localhost:5678/api/works', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Si la réponse est positive, afficher un message de succès
+        console.log("Données envoyées avec succès:", data);
+        alert("Le work a été ajouté avec succès !");
 
-        try {
-            const response = await fetch("http://localhost:5678/api/works", {
-                method: "POST",
-                body: formData,
-                headers: {
-                    "Authorization": "Bearer " + localStorage.getItem("token"),
-                },
-            });
+        // Réinitialiser le formulaire
+        resetFormFields();
 
-            if (response.ok) {
-                alert("Work ajouté avec succès !");
-                resetFormFields();
-                modalGallery(); 
-            } else {
-                alert("Erreur lors de l'ajout du work.");
-            }
-        } catch (error) {
-            console.error("Erreur :", error);
-        }
+        // Fermer la modale (si nécessaire)
+        const modalOverlay = document.querySelector(".modalOverlay");
+        modalOverlay.style.display = "none";
+        document.body.classList.remove("no-scroll");
+
+        // Rediriger vers la page principale
+        window.location.href = "index.html"; // Remplacez "index.html" par l'URL de votre page principale
+    })
+    .catch(error => {
+        // Gérer les erreurs en cas de problème avec la requête
+        console.error("Erreur lors de l'ajout du work:", error);
+        alert("Une erreur est survenue lors de l'ajout du work.");
     });
 }

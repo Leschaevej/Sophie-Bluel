@@ -115,7 +115,8 @@ button:hover {
 #introduction {
 	display: flex;
 	align-items: center;
-	margin: 50px;
+	margin-top: 50px;
+	margin-bottom: 50px;
 	gap: 40px;
 }
 
@@ -126,7 +127,7 @@ button:hover {
 #introduction img {
 	display: block;
 	margin: auto;
-	width: 80%;
+	width: 100%;
 }
 
 #introduction article {
@@ -182,23 +183,32 @@ button:hover {
 
 /* Galerie */
 #portfolio {
-	margin: 0 100px;
+    margin: 0 100px;
 }
 
 .gallery {
-	width: 100%;
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	grid-gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Crée des colonnes flexibles qui remplissent l'espace */
+    gap: 20px; /* Espace entre les images */
+    width: 100%;
+}
+
+.imageContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* S'assure que chaque image occupe toute la largeur de la cellule */
 }
 
 .gallery img {
-	width: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .gallery p {
-	margin-top: 5px;
+    margin-top: 5px;
 }
+
 
 /* Contact form */
 #contact {
