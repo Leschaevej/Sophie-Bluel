@@ -88,6 +88,9 @@ function showPhotoForm() {
         }
 
         if (backButton) backButton.style.display = "none";
+
+        // Réinitialiser les champs du formulaire lorsque le backButton est cliqué
+        resetFormFields();
     });
 }
 
@@ -341,6 +344,11 @@ function modalForm() {
     previewContainer.id = 'imagePreview';
     addImageInput.appendChild(previewContainer);
 
+    // Ajout du conteneur d'erreur pour l'image
+    const imageErrorContainer = document.createElement('div');
+    imageErrorContainer.classList.add('error-image-container');
+    addImageInput.insertAdjacentElement('afterend', imageErrorContainer);
+
     // Ajouter le texte
     const infoText = document.createElement('p');
     infoText.textContent = 'jpg, png : 4mo max';
@@ -360,6 +368,11 @@ function modalForm() {
     titleInput.placeholder = 'Ajouter un titre';
     modalFormContainer.appendChild(titleInput);
 
+    // Ajout du conteneur d'erreur pour le titre
+    const titleErrorContainer = document.createElement('div');
+    titleErrorContainer.classList.add('error-title-container');
+    titleInput.insertAdjacentElement('afterend', titleErrorContainer);
+
     // Créer et ajouter le champ "Catégorie"
     const categoryLabel = document.createElement('label');
     categoryLabel.setAttribute('for', 'category');
@@ -371,6 +384,11 @@ function modalForm() {
     categorySelect.name = 'category';
     categorySelect.required = true;
     modalFormContainer.appendChild(categorySelect);
+
+    // Ajout du conteneur d'erreur pour la catégorie
+    const categoryErrorContainer = document.createElement('div');
+    categoryErrorContainer.classList.add('error-category-container');
+    categorySelect.insertAdjacentElement('afterend', categoryErrorContainer);
 
     // Créer un bouton "Ajouter le work" dans la formContainer
     let addNewWorkButton = document.querySelector('.addNewWorkButton');
@@ -420,50 +438,90 @@ function modalForm() {
     });
 }
 
-function resetFormFields() {
-    // Réinitialiser les valeurs des champs
-    document.getElementById('image').value = '';  
-    document.getElementById('title').value = '';  
-    document.getElementById('category').selectedIndex = 0;  
-
-    // Réafficher l'icône et le texte de l'input image
-    const addImageInput = document.querySelector('.addImageInput');
-    const previewContainer = document.getElementById('imagePreview');
-    const icon = addImageInput.querySelector('i');
-    const input = addImageInput.querySelector('input');
-    const infoText = addImageInput.querySelector('p');
-    const customButton = addImageInput.querySelector('.customAddPhotoButton'); // Sélectionner le bouton
-
-    if (previewContainer) previewContainer.innerHTML = ''; // Supprimer l'image prévisualisée
-    if (icon) icon.style.display = 'block'; // Réafficher l'icône
-    if (input) input.style.display = 'none'; // Cacher l'input
-    if (infoText) infoText.style.display = 'block'; // Réafficher le texte "jpg, png : 4mo max"
-    if (customButton) customButton.style.display = 'inline-block'; // Réafficher le bouton
-}
-
 function addNewWork() {
-    // Récupérer les valeurs du formulaire
+    // Récupérer les éléments
     const imageInput = document.querySelector('#image');
+    const imageInputDiv = document.querySelector('.addImageInput');  // La div contenant le champ image
     const titleInput = document.querySelector('#title');
     const categorySelect = document.querySelector('#category');
 
-    const imageFile = imageInput.files[0]; // Récupérer l'image choisie
-    const title = titleInput.value; // Récupérer le titre
-    const categoryId = categorySelect.value; // Récupérer la catégorie
+    // Réinitialiser les messages d'erreur avant la validation
+    const errorMessages = document.querySelectorAll('.error-message');
+    errorMessages.forEach((errorMessage) => {
+        errorMessage.remove();  // Retirer tous les messages d'erreur existants
+    });
 
-    // Vérifier que tous les champs sont remplis
-    if (!imageFile || !title || !categoryId) {
-        alert("Tous les champs doivent être remplis !");
-        return; // Si un champ est manquant, ne pas envoyer la requête
+    // Vérification des champs
+    let formIsValid = true;
+
+    // Vérification du champ image
+    if (!imageInput.files[0]) {
+        formIsValid = false;
+        const errorContainer = document.querySelector('.error-image-container');
+        errorContainer.innerHTML = '';
+        const errorMessage = document.createElement('p');
+        errorMessage.classList.add('error-message');
+        errorMessage.textContent = 'Veuillez ajouter une image.';
+        errorContainer.appendChild(errorMessage);
     }
 
-    // Créer un objet FormData pour envoyer les données
-    const formData = new FormData();
-    formData.append('image', imageFile);
-    formData.append('title', title);
-    formData.append('category', categoryId);
+    // Vérification du champ titre
+    if (!titleInput.value.trim()) {
+        formIsValid = false;
+        const errorContainer = document.querySelector('.error-title-container');
+        errorContainer.innerHTML = '';
+        const errorMessage = document.createElement('p');
+        errorMessage.classList.add('error-message');
+        errorMessage.textContent = 'Le titre est obligatoire.';
+        errorContainer.appendChild(errorMessage);
+    }
 
-    // Envoi des données vers l'API
+    // Vérification du champ catégorie
+    if (!categorySelect.value) {
+        formIsValid = false;
+        const errorContainer = document.querySelector('.error-category-container');
+        errorContainer.innerHTML = '';
+        const errorMessage = document.createElement('p');
+        errorMessage.classList.add('error-message');
+        errorMessage.textContent = 'Veuillez sélectionner une catégorie.';
+        errorContainer.appendChild(errorMessage);
+    }
+
+    // Ajouter un event listener pour le champ "image" pour supprimer l'erreur quand l'image est sélectionnée
+    imageInput.addEventListener('change', function() {
+        const errorContainer = document.querySelector('.error-image-container');
+        if (imageInput.files[0]) {
+            errorContainer.innerHTML = '';  // Supprimer le message d'erreur si une image est choisie
+        }
+    });
+
+    // Ajouter un event listener pour le champ "titre" pour supprimer l'erreur quand le titre est saisi
+    titleInput.addEventListener('input', function() {
+        const errorContainer = document.querySelector('.error-title-container');
+        if (titleInput.value.trim()) {
+            errorContainer.innerHTML = '';  // Supprimer le message d'erreur si le titre est saisi
+        }
+    });
+
+    // Ajouter un event listener pour le champ "catégorie" pour supprimer l'erreur quand une catégorie est sélectionnée
+    categorySelect.addEventListener('change', function() {
+        const errorContainer = document.querySelector('.error-category-container');
+        if (categorySelect.value) {
+            errorContainer.innerHTML = '';  // Supprimer le message d'erreur si une catégorie est sélectionnée
+        }
+    });
+
+    // Si les champs sont invalides, on ne soumet pas le formulaire
+    if (!formIsValid) {
+        return;
+    }
+
+    // Si tous les champs sont valides, on soumet le formulaire
+    const formData = new FormData();
+    formData.append('image', imageInput.files[0]);
+    formData.append('title', titleInput.value);
+    formData.append('category', categorySelect.value);
+
     fetch('http://localhost:5678/api/works', {
         method: 'POST',
         body: formData,
@@ -473,11 +531,10 @@ function addNewWork() {
     })
     .then(response => response.json())
     .then(data => {
-        // Si la réponse est positive, afficher un message de succès
         console.log("Données envoyées avec succès:", data);
         alert("Le work a été ajouté avec succès !");
 
-        // Réinitialiser le formulaire
+        // Réinitialiser les champs
         resetFormFields();
 
         // Fermer la modale
@@ -489,8 +546,51 @@ function addNewWork() {
         window.location.href = "index.html";
     })
     .catch(error => {
-        // Gérer les erreurs en cas de problème avec la requête
         console.error("Erreur lors de l'ajout du work:", error);
         alert("Une erreur est survenue lors de l'ajout du work.");
     });
+}
+
+function resetFormFields() {
+    const imageInput = document.querySelector('#image');
+    const titleInput = document.querySelector('#title');
+    const categorySelect = document.querySelector('#category');
+    
+    // Réinitialiser les champs du formulaire
+    imageInput.value = '';  // Réinitialiser le champ image
+    titleInput.value = '';  // Réinitialiser le champ titre
+    categorySelect.selectedIndex = -1;  // Réinitialiser la sélection de catégorie
+
+    // Réinitialiser les messages d'erreur
+    const errorMessages = document.querySelectorAll('.error-message');
+    errorMessages.forEach((errorMessage) => {
+        errorMessage.remove();  // Retirer les messages d'erreur existants
+    });
+
+    // Réinitialiser la prévisualisation de l'image
+    const previewContainer = document.querySelector('#imagePreview');
+    if (previewContainer) {
+        previewContainer.innerHTML = '';  // Vider la prévisualisation
+    }
+
+    // Réafficher les éléments masqués dans .addImageInput
+    const icon = document.querySelector('.addImageInput i');
+    const input = document.querySelector('.addImageInput input');
+    const infoText = document.querySelector('.addImageInput p');
+    const customButton = document.querySelector('.addImageInput .customAddPhotoButton');
+    
+    if (icon) icon.style.display = 'block';
+    if (input) input.style.display = 'block';
+    if (infoText) infoText.style.display = 'block';
+    if (customButton) customButton.style.display = 'block';
+
+    // Appliquer display: none; sur input[type="file"] pour masquer le champ
+    if (imageInput) {
+        imageInput.style.display = 'none'; // Cacher le champ de fichier
+    }
+
+   // Réinitialiser le champ de catégorie pour qu'il affiche "Sélectionner une catégorie"
+   if (categorySelect) {
+       categorySelect.selectedIndex = 0; // Remet l'option "Sélectionner une catégorie" comme sélectionnée
+   }
 }
