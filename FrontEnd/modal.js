@@ -94,9 +94,9 @@ function showPhotoForm() {
 function modalGallery() {
     // Sélectionne le conteneur de la galerie dans la modale
     const modalGallery = document.querySelector(".galleryContainer");
-    modalGallery.innerHTML = ''; // Effacer la galerie existante
+    modalGallery.innerHTML = '';
 
-    // Crée le titre h2 sans envelopper dans une div
+    // Crée le titre h2
     const galleryTitle = document.createElement('h2');
     galleryTitle.textContent = "Galerie photo";
     modalGallery.appendChild(galleryTitle);
@@ -116,9 +116,9 @@ function modalGallery() {
 
                 // Crée l'image et ajoute l'ID dans le data-id
                 const img = document.createElement('img');
-                img.src = work.imageUrl; // Remplacer avec l'URL de l'image récupérée depuis l'API
-                img.alt = work.title; // Titre de l'œuvre
-                img.dataset.workId = work.id;  // ID de l'œuvre
+                img.src = work.imageUrl;
+                img.alt = work.title;
+                img.dataset.workId = work.id;
 
                 // Ajoute l'image au conteneur
                 imageContainer.appendChild(img);
@@ -132,11 +132,11 @@ function modalGallery() {
                 // Ajoute l'image au container principal
                 galleryContainer.appendChild(imageContainer);
 
+                // Gérer la suppression de l'image
                 deleteButton.addEventListener('click', function() {
-                    const workId = img.dataset.workId;  // Récupère l'ID de l'œuvre
-                    deleteWorks(workId, imageContainer); // Appel de la fonction deleteWorks pour supprimer l'œuvre
+                    const workId = img.dataset.workId;
+                    deleteWorks(workId, imageContainer);
                 });
-                
             });
         })
         .catch(error => {
@@ -166,10 +166,18 @@ function modalGallery() {
 }
 
 function deleteWorks(workId, imageContainer) {
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+        console.error("Token manquant !");
+        alert("Vous devez être connecté pour effectuer cette action.");
+        return;
+    }
+
+    // Supprimer l'œuvre de l'API
     fetch(`http://localhost:5678/api/works/${workId}`, {
         method: 'DELETE',
         headers: {
-            'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+            'Authorization': 'Bearer ' + token,
         }
     })
     .then(response => {
@@ -177,15 +185,45 @@ function deleteWorks(workId, imageContainer) {
             console.log("Work supprimé avec succès");
 
             // Retirer l'élément de la galerie modale
-            imageContainer.remove();  // Retirer l'élément DOM sans recharger la page
+            imageContainer.remove(); 
 
-            // Retirer l'élément de la galerie principale
-            const mainGallery = document.querySelector('.main-gallery');
+            // Rafraîchir la galerie modale
+            modalGallery(); // Rafraîchit la galerie de la modale
+
+            // Rafraîchir la galerie principale
+            const mainGallery = document.querySelector(".gallery");
+
             if (mainGallery) {
-                const workToRemove = mainGallery.querySelector(`[data-work-id='${workId}']`);
-                if (workToRemove) {
-                    workToRemove.remove();
-                }
+                mainGallery.innerHTML = '';  // Réinitialise la galerie principale
+
+                // Re-fetch des œuvres et mise à jour de la galerie principale
+                fetch('http://localhost:5678/api/works')
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(work => {
+                            const imageContainer = document.createElement('div');
+                            imageContainer.classList.add('image-container');
+                            
+                            // Créer et ajouter l'image
+                            const img = document.createElement('img');
+                            img.src = work.imageUrl;
+                            img.alt = work.title;
+                            imageContainer.appendChild(img);
+
+                            // Créer et ajouter le titre ou autre contenu sous l'image
+                            const p = document.createElement('p');
+                            p.textContent = work.title;  // Assure-toi que `work.title` est bien ce que tu veux afficher
+                            imageContainer.appendChild(p);
+
+                            // Ajouter l'élément à la galerie principale
+                            mainGallery.appendChild(imageContainer);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la récupération des œuvres pour la galerie principale:', error);
+                    });
+            } else {
+                console.error('Galerie principale non trouvée !');
             }
         } else {
             console.error("Erreur lors de la suppression du work");
@@ -193,10 +231,11 @@ function deleteWorks(workId, imageContainer) {
         }
     })
     .catch(error => {
-        console.error("Erreur lors de la requête de suppression:", error);
-        alert("Une erreur est survenue.");
+        console.error("Erreur de requête :", error);
+        alert("Une erreur est survenue lors de la suppression du work.");
     });
 }
+
 
 function modalForm() {
     // Obtenez la référence de la div "formContainer"
@@ -441,13 +480,13 @@ function addNewWork() {
         // Réinitialiser le formulaire
         resetFormFields();
 
-        // Fermer la modale (si nécessaire)
+        // Fermer la modale
         const modalOverlay = document.querySelector(".modalOverlay");
         modalOverlay.style.display = "none";
         document.body.classList.remove("no-scroll");
 
         // Rediriger vers la page principale
-        window.location.href = "index.html"; // Remplacez "index.html" par l'URL de votre page principale
+        window.location.href = "index.html";
     })
     .catch(error => {
         // Gérer les erreurs en cas de problème avec la requête

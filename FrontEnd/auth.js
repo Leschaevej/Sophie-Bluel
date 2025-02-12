@@ -44,58 +44,57 @@ function showLoginOverlay() {
 
 function loginForm() {
     // Obtenez la référence de la section "loginOverlay"
-const loginOverlay = document.getElementById('loginOverlay');
+    const loginOverlay = document.getElementById('loginOverlay');
 
-// Créer le titre h2
-const h2 = document.createElement('h2');
-h2.textContent = 'Login';
-loginOverlay.appendChild(h2);
+    // Créer le titre h2
+    const h2 = document.createElement('h2');
+    h2.textContent = 'Login';
+    loginOverlay.appendChild(h2);
 
-// Créer le formulaire
-const form = document.createElement('form');
-form.id = 'loginForm';
+    // Créer le formulaire
+    const form = document.createElement('form');
+    form.id = 'loginForm';
 
-// Créer et ajouter le champ "E-mail"
-const emailLabel = document.createElement('label');
-emailLabel.setAttribute('for', 'emailUser');
-emailLabel.textContent = 'E-mail';
-form.appendChild(emailLabel);
+    // Créer et ajouter le champ "E-mail"
+    const emailLabel = document.createElement('label');
+    emailLabel.setAttribute('for', 'emailUser');
+    emailLabel.textContent = 'E-mail';
+    form.appendChild(emailLabel);
 
-const emailInput = document.createElement('input');
-emailInput.type = 'text';
-emailInput.id = 'emailUser';
-emailInput.name = 'email';
-emailInput.required = true;  // Marquer comme requis
-form.appendChild(emailInput);
+    const emailInput = document.createElement('input');
+    emailInput.type = 'text';
+    emailInput.id = 'emailUser';
+    emailInput.name = 'email';
+    emailInput.required = true;
+    form.appendChild(emailInput);
 
-// Créer et ajouter le champ "Mot de passe"
-const passwordLabel = document.createElement('label');
-passwordLabel.setAttribute('for', 'password');
-passwordLabel.textContent = 'Mot de passe';
-form.appendChild(passwordLabel);
+    // Créer et ajouter le champ "Mot de passe"
+    const passwordLabel = document.createElement('label');
+    passwordLabel.setAttribute('for', 'password');
+    passwordLabel.textContent = 'Mot de passe';
+    form.appendChild(passwordLabel);
 
-const passwordInput = document.createElement('input');
-passwordInput.type = 'password';
-passwordInput.id = 'password';
-passwordInput.name = 'password';
-passwordInput.required = true;  // Marquer comme requis
-form.appendChild(passwordInput);
+    const passwordInput = document.createElement('input');
+    passwordInput.type = 'password';
+    passwordInput.id = 'password';
+    passwordInput.name = 'password';
+    passwordInput.required = true;
+    form.appendChild(passwordInput);
 
-// Créer et ajouter le bouton de soumission
-const submitButton = document.createElement('button');
-submitButton.type = 'button';
-submitButton.classList.add('loginButton');
-submitButton.textContent = 'Se connecter';
-form.appendChild(submitButton);
+    // Créer et ajouter le bouton de soumission
+    const submitButton = document.createElement('button');
+    submitButton.type = 'button';
+    submitButton.classList.add('loginButton');
+    submitButton.textContent = 'Se connecter';
+    form.appendChild(submitButton);
 
-// Créer et ajouter un élément pour afficher les erreurs
-const errorParagraph = document.createElement('p');
-errorParagraph.id = 'loginError';
-form.appendChild(errorParagraph);
+    // Créer et ajouter un élément pour afficher les erreurs
+    const errorParagraph = document.createElement('p');
+    errorParagraph.id = 'loginError';
+    form.appendChild(errorParagraph);
 
-// Ajouter le formulaire à la section "loginOverlay"
-loginOverlay.appendChild(form);
-
+    // Ajouter le formulaire à la section "loginOverlay"
+    loginOverlay.appendChild(form);
 }
 
 function userLogin() {
@@ -110,7 +109,7 @@ function userLogin() {
 
             // Gère le message d'erreur
             const errorMessage = document.getElementById("loginError");
-            errorMessage.style.display = "none"; // Cache l'ancienne erreur
+            errorMessage.style.display = "none";
 
             // Crée un objet contenant les informations de connexion
             const loginData = { email, password };
@@ -164,15 +163,13 @@ function userLogin() {
     }
 }
 
-
 // Fonction pour fermer l'overlay
 function closeLoginOverlay() {
     const overlay = document.getElementById("loginOverlay");
     if (overlay) {
-        overlay.style.display = "none";  // Cache l'overlay de connexion
+        overlay.style.display = "none";
     }
 }
-
 
 function logOut () {
     document.addEventListener("DOMContentLoaded", function () {
@@ -187,12 +184,12 @@ function logOut () {
                 // L'utilisateur est connecté
                 loginLink.style.display = "none";
                 logoutLink.style.display = "inline";
-                openModalLink.style.display = "inline"; // Afficher le lien "Modifier"
+                openModalLink.style.display = "inline";
             } else {
                 // L'utilisateur est déconnecté
                 loginLink.style.display = "inline";
                 logoutLink.style.display = "none";
-                openModalLink.style.display = "none"; // Masquer le lien "Modifier"
+                openModalLink.style.display = "none";
             }
         }
 
@@ -202,7 +199,7 @@ function logOut () {
         // Ajout de l'événement pour se déconnecter
         logoutLink.addEventListener("click", function () {
             sessionStorage.removeItem("token");
-            checkAuth();  // Re-vérifier l'état de connexion après la déconnexion
+            checkAuth();
         });
     });
 }

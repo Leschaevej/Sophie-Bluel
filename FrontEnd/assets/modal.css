@@ -176,7 +176,12 @@ input[type="file"]#image {
 
 .addImageInput button {
 	width: 170px;
+    color: #306685;
 	background-color: #cbd6dc;
+}
+
+.addImageInput button:hover {
+    background-color: #a7a7a7;
 }
 
 .addImageInput p {

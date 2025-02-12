@@ -31,7 +31,7 @@ async function generateWorks() {
     worksData.forEach(article => {
         // Création d’une div pour contenir l'image
         const imageContainer = document.createElement("div");
-        imageContainer.classList.add("imageContainer"); // Ajouter la classe imageContainer
+        imageContainer.classList.add("imageContainer");
 
         // Création des balises 
         const imageElement = document.createElement("img");
@@ -136,7 +136,7 @@ function updateGallery() {
                 // Ajouter un événement de suppression
                 img.addEventListener('click', function() {
                     const workId = img.dataset.workId;
-                    deleteWorks(workId, imageContainer); // Supprimer l'image de la galerie
+                    deleteWorks(workId, imageContainer);
                 });
             });
         })
@@ -144,8 +144,6 @@ function updateGallery() {
             console.error('Erreur lors de la récupération des œuvres:', error);
         });
 }
-
-
 
 function setActiveButton(selectedButton) {
 

@@ -34,6 +34,10 @@ body {
 	font-size: 14px;
 }
 
+main {
+	margin: 80px;
+}
+
 /* Structure des titres */
 h1 {
 	font-family: 'Syne', sans-serif; /* Police pour h1 */
@@ -188,27 +192,27 @@ button:hover {
 
 .gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Crée des colonnes flexibles qui remplissent l'espace */
-    gap: 20px; /* Espace entre les images */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
     width: 100%;
 }
 
 .imageContainer {
     display: flex;
     flex-direction: column;
-    width: 100%; /* S'assure que chaque image occupe toute la largeur de la cellule */
+    width: 100%;
+	height: 100%;
 }
 
 .gallery img {
     width: 100%;
-    height: 100%;
+    height: 407px;
     object-fit: cover;
 }
 
 .gallery p {
     margin-top: 5px;
 }
-
 
 /* Contact form */
 #contact {
@@ -285,6 +289,6 @@ textarea {
 footer ul {
 	display: flex;
 	justify-content: flex-end;
-	margin: 2em;
+	margin: 40px;
 	list-style: none;
 }
