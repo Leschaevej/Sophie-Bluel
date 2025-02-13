@@ -1,8 +1,8 @@
 export { showLoginOverlay, loginForm, userLogin, logOut };
 
-// Fonction pour gerer la page login
+// Fonction pour afficher l'overlay de connexion
 function showLoginOverlay() {
-    // Récupère les éléments
+    // Récupérer les éléments nécessaires à l'affichage de l'overlay
     const loginOverlay = document.getElementById('loginOverlay');
     const loginLink = document.getElementById('loginLink');
     const homeLink = document.getElementById('homeLink');
@@ -11,15 +11,15 @@ function showLoginOverlay() {
     let scrollPosition = 0;
     let scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
 
-    // Ajoute un événement au clic sur le lien de connexion
+    // Ajouter un événement au clic sur le lien de connexion
     loginLink.addEventListener('click', function(event) {
         event.stopPropagation();
 
-        // Force la page à remonter et empêche le défilement
+        // Empêcher le défilement et forcer la page à remonter
         scrollPosition = window.scrollY;
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
+        document.body.style.paddingRight = `${scrollbarWidth}px`;  
         document.body.style.overflow = 'hidden';
-        loginOverlay.style.display = 'flex';  // Affiche l'overlay
+        loginOverlay.style.display = 'flex';
     });
 
     // Fonction pour fermer l'overlay de connexion
@@ -29,27 +29,32 @@ function showLoginOverlay() {
         document.body.style.paddingRight = '';
     }
 
-    // Ferme l'overlay quand on clique à côté
+    // Fermer l'overlay quand on clique à côté de celui-ci
     loginOverlay.addEventListener('click', function(event) {
         if (event.target === loginOverlay) {
             closeLoginOverlay();
         }
     });
 
-    // Ferme également l'overlay quand on clique dans le header
+    // Fermer l'overlay aussi lorsqu'on clique sur le lien "homeLink"
     homeLink.addEventListener('click', function() {
         closeLoginOverlay();
     });
 }
 
+// Fonction pour générer le formulaire de connexion
 function loginForm() {
-    // Obtenez la référence de la section "loginOverlay"
+    // Obtenir la référence de la section "loginOverlay"
     const loginOverlay = document.getElementById('loginOverlay');
 
-    // Créer le titre h2
+    // Créer une div pour contenir le formulaire
+    const formContainer = document.createElement('div');
+    formContainer.id = 'formContainer';
+
+    // Créer un titre h2 en dehors de la div
     const h2 = document.createElement('h2');
     h2.textContent = 'Login';
-    loginOverlay.appendChild(h2);
+    formContainer.appendChild(h2);
 
     // Créer le formulaire
     const form = document.createElement('form');
@@ -88,34 +93,54 @@ function loginForm() {
     submitButton.textContent = 'Se connecter';
     form.appendChild(submitButton);
 
-    // Créer et ajouter un élément pour afficher les erreurs
+    // Créer et ajouter un paragraphe pour afficher les erreurs
     const errorParagraph = document.createElement('p');
     errorParagraph.id = 'loginError';
     form.appendChild(errorParagraph);
 
-    // Ajouter le formulaire à la section "loginOverlay"
-    loginOverlay.appendChild(form);
+    // Ajouter le formulaire à la div
+    formContainer.appendChild(form);
+
+    // Ajouter la div contenant le formulaire au "loginOverlay"
+    loginOverlay.appendChild(formContainer);
 }
 
 function userLogin() {
-    // Ajoute un événement "click" sur le bouton de connexion
+    // Ajouter un événement "click" sur le bouton de connexion
     const loginButton = document.querySelector(".loginButton");
 
     if (loginButton) {
         loginButton.addEventListener("click", async function() {
-            // Récupère les valeurs des champs email et mot de passe
+            // Récupérer les valeurs des champs email et mot de passe
             const email = document.getElementById("emailUser").value;
             const password = document.getElementById("password").value;
 
-            // Gère le message d'erreur
+            // Cacher les messages d'erreur
             const errorMessage = document.getElementById("loginError");
             errorMessage.style.display = "none";
 
-            // Crée un objet contenant les informations de connexion
+            // Créer un objet contenant les informations de connexion
             const loginData = { email, password };
 
+            // Ajouter un logo de check (par exemple : coche verte)
+            const formContainer = document.getElementById("formContainer");
+            
+            // Vider le contenu de la div formContainer
+            formContainer.innerHTML = '';
+
+            // Créer le logo de check
+            const checkLogo = document.createElement('i');
+            checkLogo.classList.add('fa', 'fa-check-circle', 'success-icon', 'animate-check');
+            checkLogo.id = "checkLogo";
+
+            // Ajouter le logo de check à la div formContainer
+            formContainer.appendChild(checkLogo);
+
+            // Masquer le bouton de connexion pendant le chargement
+            loginButton.style.display = "none";
+
             try {
-                // Récupération des données depuis l'API
+                // Récupérer les données depuis l'API
                 const response = await fetch("http://localhost:5678/api/users/login", {
                     method: "POST",
                     headers: {
@@ -124,46 +149,55 @@ function userLogin() {
                     body: JSON.stringify(loginData)
                 });
 
-                // Vérifie si la réponse est correcte
+                // Vérifier si la réponse est correcte
                 if (!response.ok) {
                     throw new Error("Email ou mot de passe incorrect");
                 }
 
-                // Traite la réponse
+                // Traiter la réponse
                 const data = await response.json();
                 console.log("Connexion réussie :", data);
 
-                // Stocke les logs dans localStorage
+                // Stocker les logs dans localStorage
                 let logs = JSON.parse(localStorage.getItem("logs")) || [];
                 logs.push({ time: new Date().toLocaleString(), message: "Connexion réussie", data: data });
                 localStorage.setItem("logs", JSON.stringify(logs));
 
-                // Stocke le token dans sessionStorage
+                // Stocker le token dans sessionStorage
                 sessionStorage.setItem("token", data.token);
 
-                // Ferme l'overlay de connexion après la réussite de la connexion
-                closeLoginOverlay();
+                // Afficher le logo de check pendant 2 secondes
+                setTimeout(() => {
+                    // Fermer l'overlay de connexion après succès
+                    closeLoginOverlay();
 
-                // Redirige l'utilisateur vers la page d'accueil après une connexion réussie
-                window.location.href = "index.html";
+                    // Rediriger l'utilisateur vers la page d'accueil après 1 secondes
+                    window.location.href = "index.html";
+                }, 1000);
 
             } catch (error) {
                 console.error("Erreur :", error.message || "Une erreur est survenue");
 
-                // Stocke l'erreur dans localStorage
+                // Stocker l'erreur dans localStorage
                 let logs = JSON.parse(localStorage.getItem("logs")) || [];
                 logs.push({ time: new Date().toLocaleString(), message: "Erreur : " + (error.message || "Email ou mot de passe incorrect") });
                 localStorage.setItem("logs", JSON.stringify(logs));
 
-                // Affiche l'erreur sous le formulaire
+                // Afficher l'erreur sous le formulaire
                 errorMessage.textContent = error.message || "Email ou mot de passe incorrect";
                 errorMessage.style.display = "block";
+            } finally {
+                // Masquer le logo de check et réafficher le bouton de connexion après 1 secondes
+                setTimeout(() => {
+                    checkLogo.style.display = "none";
+                    loginButton.style.display = "inline";
+                }, 1000);
             }
         });
     }
 }
 
-// Fonction pour fermer l'overlay
+// Fonction pour fermer l'overlay de connexion
 function closeLoginOverlay() {
     const overlay = document.getElementById("loginOverlay");
     if (overlay) {
@@ -171,32 +205,34 @@ function closeLoginOverlay() {
     }
 }
 
+// Fonction pour gérer la déconnexion de l'utilisateur
 function logOut () {
     document.addEventListener("DOMContentLoaded", function () {
         const loginLink = document.getElementById("loginLink");
         const logoutLink = document.getElementById("logoutLink");
         const openModalLink = document.getElementById("openModalLink");
 
+        // Vérifier si l'utilisateur est authentifié
         function checkAuth() {
             const token = sessionStorage.getItem("token");
 
             if (token) {
-                // L'utilisateur est connecté
+                // Si l'utilisateur est connecté
                 loginLink.style.display = "none";
                 logoutLink.style.display = "inline";
                 openModalLink.style.display = "inline";
             } else {
-                // L'utilisateur est déconnecté
+                // Si l'utilisateur est déconnecté
                 loginLink.style.display = "inline";
                 logoutLink.style.display = "none";
                 openModalLink.style.display = "none";
             }
         }
 
-        // Vérifier l'authentification au chargement
+        // Vérifier l'authentification dès le chargement de la page
         checkAuth();
 
-        // Ajout de l'événement pour se déconnecter
+        // Ajouter un événement pour se déconnecter
         logoutLink.addEventListener("click", function () {
             sessionStorage.removeItem("token");
             checkAuth();

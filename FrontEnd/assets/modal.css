@@ -21,8 +21,9 @@ body.no-scroll {
 	border-radius: 10px;
 	width: 630px;
 	height: 688px;
-	text-align: center;
-	justify-items: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 
 /* Back and Close buttons */
@@ -122,6 +123,86 @@ body.no-scroll {
 
 .delete-button:hover i {
     color: red;
+}
+
+.confirmation-overlay {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.confirmation-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 250px;
+    height: 150px;
+    background-color: #cbd6dc;
+    display: flex;
+    z-index: 9999;
+    border-radius: 30px;
+}
+
+.confirmation-overlay p {
+    color: #306685;
+    font-weight: 500;
+    font-size: 18px;
+    margin-bottom: 20px;
+    width: 200px;
+    display: flex;
+    justify-content: center;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 150px;
+    gap: 20px;
+}
+
+.confirm-button {
+    background-color: var(--main-color);
+    color: white;
+    border: none;
+    width: 50%;
+}
+
+.cancel-button {
+    background-color: darkred;
+    color: white;
+    border: none;
+    width: 50%;
+}
+
+.cancel-button:hover {
+    background-color: red;
+}
+
+.trash-icon {
+    font-size: 50px;
+    color: darkred;
+    animation: popAnimation 0.5s ease-in-out;
+}
+
+@keyframes popAnimation {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 .showFormButton {
@@ -251,6 +332,36 @@ input {
 	width: 237px;
 	margin-top: 40px;
 }
+
+.success-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: green;
+    width: 100%;
+    height: 100%;
+    font-size: 200px;
+}
+
+/* Animation pour l'icône check */
+@keyframes checkAnimation {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.animate-check {
+    animation: checkAnimation 0.8s ease-out forwards;
+}
+
 
 .error-category-container {
     height: 15px;

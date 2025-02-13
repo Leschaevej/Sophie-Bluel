@@ -106,43 +106,22 @@ function generateFilter() {
 }
 
 // Fonction pour mettre à jour la galerie avec les travaux filtrées
-function updateGallery() {
-    const mainGallery = document.querySelector(".main-gallery-container");
+function updateGallery(filteredWorks) {
+    const mainGallery = document.querySelector(".gallery");
+    mainGallery.innerHTML = ''; // On vide la galerie
 
-    // Réinitialiser la galerie (vider le contenu précédent)
-    mainGallery.innerHTML = '';
+    filteredWorks.forEach(work => {
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'image-container';
 
-    // Récupérer les œuvres restantes depuis l'API
-    fetch('http://localhost:5678/api/works')
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(work => {
-                // Créer un conteneur pour chaque image
-                const imageContainer = document.createElement('div');
-                imageContainer.className = 'image-container';
+        const img = document.createElement('img');
+        img.src = work.imageUrl;
+        img.alt = work.title;
+        img.dataset.workId = work.id;
 
-                // Créer l'image et ajouter l'ID dans le data-id
-                const img = document.createElement('img');
-                img.src = work.imageUrl;
-                img.alt = work.title;
-                img.dataset.workId = work.id;
-
-                // Ajouter l'image au conteneur
-                imageContainer.appendChild(img);
-
-                // Ajouter le conteneur à la galerie principale
-                mainGallery.appendChild(imageContainer);
-
-                // Ajouter un événement de suppression
-                img.addEventListener('click', function() {
-                    const workId = img.dataset.workId;
-                    deleteWorks(workId, imageContainer);
-                });
-            });
-        })
-        .catch(error => {
-            console.error('Erreur lors de la récupération des œuvres:', error);
-        });
+        imageContainer.appendChild(img);
+        mainGallery.appendChild(imageContainer);
+    });
 }
 
 function setActiveButton(selectedButton) {
@@ -161,26 +140,21 @@ function setActiveButton(selectedButton) {
 }
 
 function contactForm() {
-    
-    // Obtenez la section avec l'id "contact"
     const contactSection = document.getElementById('contact');
 
-    // Créer le titre h2
     const h2 = document.createElement('h2');
     h2.textContent = 'Contact';
     contactSection.appendChild(h2);
 
-    // Ajouter un paragraphe de description
     const p = document.createElement('p');
     p.textContent = 'Vous avez un projet ? Discutons-en !';
     contactSection.appendChild(p);
 
-    // Créer le formulaire
     const form = document.createElement('form');
     form.action = '#';
     form.method = 'post';
+    form.setAttribute('novalidate', 'true');  // Désactive la validation native du navigateur
 
-    // Créer et ajouter le champ "Nom"
     const nameLabel = document.createElement('label');
     nameLabel.setAttribute('for', 'name');
     nameLabel.textContent = 'Nom';
@@ -190,9 +164,14 @@ function contactForm() {
     nameInput.type = 'text';
     nameInput.name = 'name';
     nameInput.id = 'name';
+    nameInput.required = true;
     form.appendChild(nameInput);
 
-    // Créer et ajouter le champ "Email"
+    // Créer une div pour le message d'erreur sous le champ "Nom"
+    const nameErrorDiv = document.createElement('div');
+    nameErrorDiv.classList = 'nameError';
+    form.appendChild(nameErrorDiv);
+
     const emailLabel = document.createElement('label');
     emailLabel.setAttribute('for', 'email');
     emailLabel.textContent = 'Email';
@@ -202,44 +181,137 @@ function contactForm() {
     emailInput.type = 'email';
     emailInput.name = 'email';
     emailInput.id = 'email';
+    emailInput.required = true;
     form.appendChild(emailInput);
 
-    // Créer et ajouter le champ "Message"
+    // Créer une div pour le message d'erreur sous le champ "Email"
+    const emailErrorDiv = document.createElement('div');
+    emailErrorDiv.classList = 'emailError';
+    form.appendChild(emailErrorDiv);
+
     const messageLabel = document.createElement('label');
     messageLabel.setAttribute('for', 'message');
     messageLabel.textContent = 'Message';
     form.appendChild(messageLabel);
 
+    const counterWrapper = document.createElement('div');
+    counterWrapper.classList.add('counter-wrapper');
+    
     const messageTextArea = document.createElement('textarea');
     messageTextArea.name = 'message';
     messageTextArea.id = 'message';
     messageTextArea.cols = 30;
     messageTextArea.rows = 10;
-    form.appendChild(messageTextArea);
+    messageTextArea.required = true;
+    counterWrapper.appendChild(messageTextArea);
 
-    // Créer et ajouter le bouton d'envoi (bouton de type "button")
-    const submitButton = document.createElement('button');
-    submitButton.type = 'button'; // Spécifie que c'est un bouton, pas un bouton de soumission
-    submitButton.textContent = 'Envoyer'; // Texte du bouton
+    const charCount = document.createElement('span');
+    charCount.classList.add('charCount');
+    charCount.textContent = '0'; // Commence à 0, sans limite
+    counterWrapper.appendChild(charCount);
 
-    // Ajouter la classe contactButton au bouton
-    submitButton.classList.add('contactButton');
+    form.appendChild(counterWrapper);
 
-    // Ajouter un événement de clic pour envoyer le formulaire
-    submitButton.addEventListener('click', function() {
-        // Ici, tu peux ajouter une fonction pour gérer l'envoi du formulaire
-        // Exemple : envoyer le formulaire via une requête AJAX ou valider les champs avant l'envoi
-        if (form.checkValidity()) {
-            // Si le formulaire est valide, tu peux l'envoyer par exemple avec fetch
-            alert('Formulaire envoyé !');
+    // Créer une div pour le message d'erreur sous le champ "Message"
+    const messageErrorDiv = document.createElement('div');
+    messageErrorDiv.classList = 'messageError';
+    form.appendChild(messageErrorDiv);
+
+    // Validation en temps réel pour le champ "Nom"
+    nameInput.addEventListener('input', function() {
+        const name = nameInput.value.trim();
+        const namePattern = /^[a-zA-ZÀ-ÿ\s-]+$/;
+        if (!name) {
+            nameErrorDiv.textContent = 'Veuillez renseigner votre nom.';
+        } else if (!namePattern.test(name)) {
+            nameErrorDiv.textContent = 'Veuillez entrer un nom valide (lettres, accents, espaces et tirets seulement).';
         } else {
-            alert('Veuillez remplir tous les champs correctement.');
+            nameErrorDiv.textContent = ''; // Effacer le message si tout est correct
         }
     });
 
-    form.appendChild(submitButton);  // Ajouter le bouton d'envoi au formulaire
+    // Validation en temps réel pour le champ "Email"
+    emailInput.addEventListener('input', function() {
+        const email = emailInput.value.trim();
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!email) {
+            emailErrorDiv.textContent = 'Veuillez renseigner votre email.';
+        } else if (!emailPattern.test(email)) {
+            emailErrorDiv.textContent = 'Veuillez entrer un email valide.';
+        } else {
+            emailErrorDiv.textContent = ''; // Effacer le message si tout est correct
+        }
+    });
 
-    // Ajouter le formulaire à la section "contact"
+    // Validation en temps réel pour le champ "Message"
+    messageTextArea.addEventListener('input', function() {
+        const message = messageTextArea.value.trim();
+        if (!message) {
+            messageErrorDiv.textContent = 'Le champ message est obligatoire.';
+        } else if (message.length < 50) {
+            messageErrorDiv.textContent = 'Le message doit comporter au moins 50 caractères.';
+        } else {
+            messageErrorDiv.textContent = ''; // Effacer le message si tout est correct
+        }
+
+        // Mettre à jour le compteur de caractères en temps réel
+        charCount.textContent = `${message.length}`;
+    });
+
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.textContent = 'Envoyer';
+    submitButton.classList.add('contactButton');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();  // Empêcher le comportement par défaut du formulaire
+    
+        let valid = true; // Flag pour vérifier si le formulaire est valide
+    
+        // Effacer les messages d'erreur à chaque soumission
+        nameErrorDiv.textContent = '';
+        emailErrorDiv.textContent = '';
+        messageErrorDiv.textContent = '';
+    
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        const message = messageTextArea.value.trim();
+    
+        // Validation du nom
+        const namePattern = /^[a-zA-ZÀ-ÿ\s-]+$/;
+        if (!name) {
+            valid = false;
+            nameErrorDiv.textContent = 'Veuillez renseigner votre nom.';
+        } else if (!namePattern.test(name)) {
+            valid = false;
+            nameErrorDiv.textContent = 'Veuillez entrer un nom valide (lettres, accents, espaces et tirets seulement).';
+        }
+    
+        // Validation de l'email
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!email) {
+            valid = false;
+            emailErrorDiv.textContent = 'Veuillez renseigner votre email.';
+        }
+    
+        // Validation du message
+        if (!message) {
+            valid = false;
+            messageErrorDiv.textContent = 'Le champ message est obligatoire.';
+        } else if (message.length < 50) {
+            valid = false;
+            messageErrorDiv.textContent = 'Le message doit comporter au moins 50 caractères.';
+        }
+    
+        if (valid) {
+            // Si tout est valide, vous pouvez envoyer le formulaire ou effectuer une action
+            alert('Formulaire envoyé !');
+            form.reset();  // Réinitialiser le formulaire après envoi
+            charCount.textContent = '0'; // Réinitialiser le compteur de caractères
+        }
+    });    
+
+    form.appendChild(submitButton);
     contactSection.appendChild(form);
 }
 
