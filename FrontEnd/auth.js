@@ -2,57 +2,44 @@ export { showLoginOverlay, loginForm, userLogin, logOut };
 
 // Fonction pour afficher l'overlay de login
 function showLoginOverlay() {
-    
-    const loginOverlay = document.getElementById('loginOverlay');
-    const loginLink = document.getElementById('loginLink');
-    const homeLink = document.getElementById('homeLink');
+    const loginOverlay = document.querySelector('.loginOverlay');
+    const loginLink = document.querySelector('.loginLink');
 
-    let scrollPosition = 0;
     let scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
 
-    // Écouteur pour afficher l'overlay de login
+    // Afficher l'overlay de login
     loginLink.addEventListener('click', function(event) {
         event.stopPropagation();
 
-        scrollPosition = window.scrollY;
-        document.body.style.paddingRight = `${scrollbarWidth}px`;  
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
         document.body.style.overflow = 'hidden';
         loginOverlay.style.display = 'flex';
+        window.scrollTo(0, 0);
     });
 
-    // Fonction pour fermer l'overlay de login
-    function closeLoginOverlay() {
-        loginOverlay.style.display = 'none';
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
-    }
-
-    // Écouteur pour fermer l'overlay si on clique en dehors de l'overlay
+    // Fermer l'overlay si l'on clique en dehors
     loginOverlay.addEventListener('click', function(event) {
         if (event.target === loginOverlay) {
-            closeLoginOverlay();
+            loginOverlay.style.display = 'none';
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
         }
-    });
-
-     // Ferme l'overlay lorsque l'utilisateur clique sur le lien "Accueil"
-    homeLink.addEventListener('click', function() {
-        closeLoginOverlay();
     });
 }
 
 // Fonction pour afficher le formulaire de login
 function loginForm() {
+    const loginOverlay = document.querySelector('.loginOverlay');
 
-    const existingForm = document.getElementById('formContainer');
+    // Vérifier s'il y a déjà un formulaire et le supprimer avant d'en créer un nouveau
+    const existingForm = document.querySelector('.loginFormContainer');
     if (existingForm) {
-        return;
+        existingForm.remove();
     }
-
-    const loginOverlay = document.getElementById('loginOverlay');
 
     // Création du conteneur du formulaire
     const formContainer = document.createElement('div');
-    formContainer.id = 'formContainer';
+    formContainer.classList = 'loginFormContainer';
 
     // Création de l'en-tête du formulaire
     const h2 = document.createElement('h2');
@@ -61,17 +48,17 @@ function loginForm() {
 
     // Création du formulaire
     const form = document.createElement('form');
-    form.id = 'loginForm';
+    form.classList = 'loginForm';
 
     // Ajout du champ "Email"
     const emailLabel = document.createElement('label');
     emailLabel.setAttribute('for', 'emailUser');
-    emailLabel.textContent = 'E-mail';
+    emailLabel.textContent = 'Email';
+    emailLabel.classList = 'loginLabel'
     form.appendChild(emailLabel);
-
     const emailInput = document.createElement('input');
     emailInput.type = 'text';
-    emailInput.id = 'emailUser';
+    emailInput.classList = 'loginEmail';
     emailInput.name = 'email';
     emailInput.required = true;
     form.appendChild(emailInput);
@@ -80,11 +67,11 @@ function loginForm() {
     const passwordLabel = document.createElement('label');
     passwordLabel.setAttribute('for', 'password');
     passwordLabel.textContent = 'Mot de passe';
+    passwordLabel.classList = 'loginLabel'
     form.appendChild(passwordLabel);
-
     const passwordInput = document.createElement('input');
     passwordInput.type = 'password';
-    passwordInput.id = 'password';
+    passwordInput.classList = 'loginPassword';
     passwordInput.name = 'password';
     passwordInput.required = true;
     form.appendChild(passwordInput);
@@ -98,7 +85,7 @@ function loginForm() {
 
     // Zone d'erreur pour afficher les messages d'erreur
     const errorParagraph = document.createElement('p');
-    errorParagraph.id = 'loginError';
+    errorParagraph.classList = 'loginError';
     form.appendChild(errorParagraph);
 
     // Ajout du formulaire au conteneur
@@ -113,18 +100,15 @@ function userLogin() {
     const loginButton = document.querySelector(".loginButton");
 
     if (loginButton) {
-        loginButton.addEventListener("click", async function() {
-
-            const email = document.getElementById("emailUser").value;
-            const password = document.getElementById("password").value;
-            const errorMessage = document.getElementById("loginError");
+        loginButton.addEventListener("click", async function () {
+            const email = document.querySelector(".loginEmail").value;
+            const password = document.querySelector(".loginPassword").value;
+            const errorMessage = document.querySelector(".loginError");
             errorMessage.style.display = "none";
             errorMessage.textContent = "";
             const loginData = { email, password };
 
             try {
-                
-                // Envoie une requête POST pour vérifier les informations de connexion
                 const response = await fetch("http://localhost:5678/api/users/login", {
                     method: "POST",
                     headers: {
@@ -137,20 +121,10 @@ function userLogin() {
                     throw new Error("Adresse mail ou mot de passe incorrecte");
                 }
 
-                // Si la connexion est réussie
                 const data = await response.json();
-
-                // Sauvegarde le token dans la session
                 sessionStorage.setItem("token", data.token);
 
-                // Réinitialisation du formulaire et de l'overlay
-                const formContainer = document.getElementById("formContainer");
-                formContainer.innerHTML = '';
-                loginButton.style.display = "none";
-                closeLoginOverlay();
-                document.body.style.overflow = '';
-
-                // Création de la barre de mode édition
+                // Création de la barre de mode édition et mise à jour des liens
                 const modeEditionBar = document.createElement('div');
                 modeEditionBar.classList = 'modeEditionBar';
                 const penIcon = document.createElement('i');
@@ -159,20 +133,22 @@ function userLogin() {
                 const text = document.createElement('span');
                 text.textContent = ' Mode édition';
                 modeEditionBar.appendChild(text);
-                const html = document.documentElement;
-                html.insertBefore(modeEditionBar, document.body);
+                document.documentElement.insertBefore(modeEditionBar, document.body);
 
-
-                // Mise à jour de l'affichage des liens de connexion
-                const loginLink = document.getElementById("loginLink");
-                const logoutLink = document.getElementById("logoutLink");
-                const openModalLink = document.getElementById("openModalLink");
+                const loginLink = document.querySelector(".loginLink");
+                const logoutLink = document.querySelector(".logoutLink");
+                const openModalLink = document.querySelector(".openModalLink");
                 loginLink.style.display = "none";
                 logoutLink.style.display = "inline";
                 openModalLink.style.display = "inline";
 
+                // Lier l'événement de déconnexion au bouton logout
+                logoutLink.addEventListener("click", logOut);
+
+                // Fermer l'overlay de login après la connexion
+                closeLoginOverlay();
+
             } catch (error) {
-                // Gestion des erreurs
                 errorMessage.textContent = "Adresse mail ou mot de passe incorrecte";
                 errorMessage.style.display = "block";
             }
@@ -180,81 +156,41 @@ function userLogin() {
     }
 }
 
-
 // Fonction pour fermer l'overlay de login
 function closeLoginOverlay() {
-    const overlay = document.getElementById("loginOverlay");
+    const overlay = document.querySelector(".loginOverlay");
     if (overlay) {
         overlay.style.display = "none";
     }
     document.body.style.paddingRight = '';
+    document.body.style.overflow = '';
 }
 
 // Fonction pour gérer la déconnexion de l'utilisateur
-function logOut () {
-    document.addEventListener("DOMContentLoaded", function () {
-        const loginLink = document.getElementById("loginLink");
-        const logoutLink = document.getElementById("logoutLink");
-        const openModalLink = document.getElementById("openModalLink");
+function logOut() {
+    // Supprimer le token
+    sessionStorage.removeItem("token");
 
-        // Vérification si l'utilisateur est connecté
-        function checkAuth() {
-            const token = sessionStorage.getItem("token");
+    // Masquer la barre de mode édition
+    const modeEditionBar = document.querySelector('.modeEditionBar');
+    if (modeEditionBar) {
+        modeEditionBar.remove();
+    }
 
-            if (token) {
-                loginLink.style.display = "none";
-                logoutLink.style.display = "inline";
-                openModalLink.style.display = "inline";
+    // Réinitialiser les liens de connexion
+    const loginLink = document.querySelector(".loginLink");
+    const logoutLink = document.querySelector(".logoutLink");
+    const openModalLink = document.querySelector(".openModalLink");
+    
+    // Afficher le lien de connexion et masquer celui de déconnexion et l'édition
+    loginLink.style.display = "inline";
+    logoutLink.style.display = "none";
+    openModalLink.style.display = "none";
 
-                // Affichage de la barre de mode édition si l'utilisateur est connecté
-                const modeEditionBar = document.getElementById('modeEditionBar');
-                if (!modeEditionBar) {
-                    const modeEditionBar = document.createElement('div');
-                    modeEditionBar.classList = 'modeEditionBar';
-                    modeEditionBar.textContent = 'Mode édition';
+    // Fermer l'overlay de connexion si ouvert
+    closeLoginOverlay();
 
-                    // Insérer la barre avant le body
-                    const html = document.documentElement;
-                    html.insertBefore(modeEditionBar, document.body);
-                }
-            } else {
-                // Si l'utilisateur n'est pas connecté
-                loginLink.style.display = "inline";
-                logoutLink.style.display = "none";
-                openModalLink.style.display = "none";
-
-                // Supprime la barre de mode édition
-                const modeEditionBar = document.querySelector('.modeEditionBar');
-                if (modeEditionBar) {
-                    modeEditionBar.remove();
-                }
-            }
-        }
-
-        checkAuth();
-
-        // Écouteur pour gérer la déconnexion
-        logoutLink.addEventListener("click", function () {
-            sessionStorage.removeItem("token");
-            checkAuth();
-
-            const formContainer = document.getElementById("formContainer");
-            if (formContainer) {
-                formContainer.remove();
-            }
-
-            loginForm();
-
-            // Réinitialisation des champs du formulaire
-            const emailInput = document.getElementById("emailUser");
-            const passwordInput = document.getElementById("password");
-            emailInput.value = '';
-            passwordInput.value = '';
-            document.getElementById("loginError").style.display = 'none';
-            const loginButton = document.querySelector(".loginButton");
-            loginButton.style.display = "inline";
-
-            userLogin();
-        });
-    });
+    // Réinitialiser l'overflow et le padding du body
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
 }

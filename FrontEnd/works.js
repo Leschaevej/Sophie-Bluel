@@ -123,7 +123,7 @@ function setActiveButton(selectedButton) {
 
 // Fonction pour créer le formulaire de contact
 function contactForm() {
-    const contactSection = document.getElementById('contact');
+    const contactSection = document.querySelector('.contact');
 
     // Création des éléments du formulaire de contact
     const h2 = document.createElement('h2');
@@ -135,66 +135,66 @@ function contactForm() {
     const form = document.createElement('form');
     form.action = '#';
     form.method = 'post';
+    form.classList = 'contactForm';
     form.setAttribute('novalidate', 'true');
 
     // Création du champ nom
     const nameLabel = document.createElement('label');
     nameLabel.setAttribute('for', 'name');
     nameLabel.textContent = 'Nom';
+    nameLabel.classList = 'contactLabel';
     form.appendChild(nameLabel);
     const nameInput = document.createElement('input');
     nameInput.type = 'text';
     nameInput.name = 'name';
-    nameInput.id = 'name';
+    nameInput.classList = 'contactName';
     nameInput.required = true;
     form.appendChild(nameInput);
-
-    // Créer une div pour le message d'erreur sous le champ "Nom"
     const nameErrorDiv = document.createElement('div');
-    nameErrorDiv.classList = 'nameError';
+    nameErrorDiv.classList = 'contactError';
     form.appendChild(nameErrorDiv);
 
     // Création du champ email
     const emailLabel = document.createElement('label');
     emailLabel.setAttribute('for', 'email');
     emailLabel.textContent = 'Email';
+    emailLabel.classList = 'contactLabel';
     form.appendChild(emailLabel);
     const emailInput = document.createElement('input');
     emailInput.type = 'email';
     emailInput.name = 'email';
-    emailInput.id = 'email';
+    emailInput.classList = 'contactEmail';
     emailInput.required = true;
     form.appendChild(emailInput);
-
-    // Créer une div pour le message d'erreur sous le champ "Email"
     const emailErrorDiv = document.createElement('div');
-    emailErrorDiv.classList = 'emailError';
+    emailErrorDiv.classList = 'contactError';
     form.appendChild(emailErrorDiv);
+
+    // Création du champ message
     const messageLabel = document.createElement('label');
     messageLabel.setAttribute('for', 'message');
     messageLabel.textContent = 'Message';
+    messageLabel.classList = 'contactLabel';
     form.appendChild(messageLabel);
-
-    // Création du champ message
-    const counterWrapper = document.createElement('div');
-    counterWrapper.classList.add('counter-wrapper');
     const messageTextArea = document.createElement('textarea');
     messageTextArea.name = 'message';
-    messageTextArea.id = 'message';
+    messageTextArea.classList = 'contactMessage';
     messageTextArea.cols = 30;
     messageTextArea.rows = 10;
     messageTextArea.required = true;
-    counterWrapper.appendChild(messageTextArea);
-    const charCount = document.createElement('span');
-    charCount.classList.add('charCount');
-    charCount.textContent = '0';
-    counterWrapper.appendChild(charCount);
-    form.appendChild(counterWrapper);
-
-    // Créer une div pour le message d'erreur sous le champ "Message"
+    form.appendChild(messageTextArea);
     const messageErrorDiv = document.createElement('div');
-    messageErrorDiv.classList = 'messageError';
+    messageErrorDiv.classList = 'contactError';
     form.appendChild(messageErrorDiv);
+
+     // Création du bouton
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.textContent = 'Envoyer';
+    submitButton.classList.add('contactButton');
+    form.appendChild(submitButton);
+
+    contactSection.appendChild(form);
 
     // Validation en temps réel pour le champ "Nom"
     nameInput.addEventListener('input', function() {
@@ -232,66 +232,44 @@ function contactForm() {
         } else {
             messageErrorDiv.textContent = '';
         }
-
-        // Mettre à jour le compteur de caractères en temps réel
-        charCount.textContent = `${message.length}`;
     });
 
-    const submitButton = document.createElement('button');
-    submitButton.type = 'submit';
-    submitButton.textContent = 'Envoyer';
-    submitButton.classList.add('contactButton');
-
+    // Vérification avant l'envoi du formulaire
     form.addEventListener('submit', function(event) {
         event.preventDefault();
-    
-        let valid = true;
-    
-        // Effacer les messages d'erreur à chaque soumission
-        nameErrorDiv.textContent = '';
-        emailErrorDiv.textContent = '';
-        messageErrorDiv.textContent = '';
-    
+
+        // Valider les champs avant d'envoyer
         const name = nameInput.value.trim();
         const email = emailInput.value.trim();
         const message = messageTextArea.value.trim();
-    
-        // Validation du nom
-        const namePattern = /^[a-zA-ZÀ-ÿ\s-]+$/;
-        if (!name) {
-            valid = false;
-            nameErrorDiv.textContent = 'Veuillez renseigner votre nom.';
-        } else if (!namePattern.test(name)) {
-            valid = false;
-            nameErrorDiv.textContent = 'Veuillez entrer un nom valide (lettres, accents, espaces et tirets seulement).';
-        }
-    
-        // Validation de l'email
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!email) {
-            valid = false;
-            emailErrorDiv.textContent = 'Veuillez renseigner votre email.';
-        }
-    
-        // Validation du message
-        if (!message) {
-            valid = false;
-            messageErrorDiv.textContent = 'Le champ message est obligatoire.';
-        } else if (message.length < 50) {
-            valid = false;
-            messageErrorDiv.textContent = 'Le message doit comporter au moins 50 caractères.';
-        }
-    
-        if (valid) {
-            // Si tout est valide, vous pouvez envoyer le formulaire ou effectuer une action
-            alert('Formulaire envoyé !');
-            form.reset();
-            charCount.textContent = '0';
-        }
-    });    
+        let isValid = true;
 
-    form.appendChild(submitButton);
-    contactSection.appendChild(form);
+        // Vérification des erreurs pour "Nom"
+        if (!name || nameErrorDiv.textContent !== '') {
+            isValid = false;
+            nameErrorDiv.textContent = nameErrorDiv.textContent || 'Veuillez renseigner votre nom.';
+        }
+
+        // Vérification des erreurs pour "Email"
+        if (!email || emailErrorDiv.textContent !== '') {
+            isValid = false;
+            emailErrorDiv.textContent = emailErrorDiv.textContent || 'Veuillez renseigner votre email.';
+        }
+
+        // Vérification des erreurs pour "Message"
+        if (!message || message.length < 50 || messageErrorDiv.textContent !== '') {
+            isValid = false;
+            messageErrorDiv.textContent = messageErrorDiv.textContent || 'Le message doit comporter au moins 50 caractères.';
+        }
+
+        // Si tout est valide, ouvrir le client mail
+        if (isValid) {
+            const subject = encodeURIComponent("Nouveau message depuis le formulaire de contact");
+            const body = encodeURIComponent(`Nom: ${name}\nEmail: ${email}\nMessage:\n${message}`);
+            window.location.href = `mailto:leschaeve.jimmy@gmail.com?subject=${subject}&body=${body}`;
+        }
+    });
+
 }
 
 modalForm();

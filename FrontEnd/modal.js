@@ -1,11 +1,13 @@
 export { openModal, checkAuth, modalGallery, modalForm,};
 
+let eventListenersAdded = false;
+
 // Fonction de vérification de l'authentification
 function checkAuth() {
 
     // Récupère le token d'authentification dans le localStorage
     const token = localStorage.getItem("token");
-    const openModalLink = document.getElementById("openModalLink");
+    const openModalLink = document.querySelector(".openModalLink");
 
     // Si un token existe, affiche le lien pour ouvrir la modal
     if (token) {
@@ -18,23 +20,20 @@ function checkAuth() {
 
 // Fonction pour ouvrir la modal
 function openModal() {
-    const openModalLink = document.querySelector("#openModalLink");
+    const openModalLink = document.querySelector(".openModalLink");
     const modalOverlay = document.querySelector(".modalOverlay");
     const modalContent = document.querySelector(".modalContent");
 
-    // Crée les boutons de retour et de fermeture
     let backAndClose = document.querySelector('.backAndClose');
     if (!backAndClose) {
         backAndClose = document.createElement('div');
         backAndClose.classList.add('backAndClose');
 
-        // Création du bouton de retour
         const backButton = document.createElement('button');
         backButton.classList.add('backButton');
         backButton.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
         backAndClose.appendChild(backButton);
 
-        // Création du bouton de fermeture
         const closeButton = document.createElement('button');
         closeButton.classList.add('closeButton');
         closeButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
@@ -43,54 +42,47 @@ function openModal() {
         modalContent.insertBefore(backAndClose, modalContent.firstChild);
     }
 
-    // Écouteur d'événement pour afficher la modal au clic
     openModalLink.addEventListener("click", function(event) {
         event.preventDefault();
 
-        // Calcul du décalage pour la barre de défilement et ajustement du padding pour empêcher le scroll
         const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
 
-        // Sélectionner la barre de mode édition
         const modeEditionBar = document.querySelector('.modeEditionBar');
         if (modeEditionBar) {
-            modeEditionBar.style.paddingRight = `${scrollbarWidth}px`; // Appliquer le paddingRight
+            modeEditionBar.style.paddingRight = `${scrollbarWidth}px`;
         }
 
-        // Affiche la modal
+        // Empêcher le défilement
+        document.body.style.overflow = "hidden";
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+
         modalOverlay.style.display = "flex";
         modalContent.style.display = "block";
 
-        // Gestion de l'affichage des sections de la galerie et du formulaire
         const modalGallery = document.querySelector(".galleryContainer");
         const modalForm = document.querySelector(".formContainer");
         if (modalGallery) modalGallery.style.display = "flex";
         if (modalForm) modalForm.style.display = "none";
 
-        // Gestion de la visibilité des boutons de navigation
         const backButton = document.querySelector('.backButton');
         const closeButton = document.querySelector('.closeButton');
         if (backButton) backButton.style.display = "none";
         if (closeButton) closeButton.style.display = "block";
 
-        // Cacher l'input de l'image lors de l'affichage de la galerie
-        const imageInput = document.querySelector('#image');
+        const imageInput = document.querySelector('.image');
         if (imageInput) imageInput.style.display = 'none';
 
-        // Écouteur pour fermer la modal lors du clic sur le bouton de fermeture
-        closeButton.addEventListener("click", function() {
+        function closeModal() {
             modalOverlay.style.display = "none";
-            document.body.classList.remove("no-scroll");
+            document.body.style.overflow = "";
             document.body.style.paddingRight = "";
             resetFormFields();
-        });
+        }
 
-        // Permet de fermer la modal en cliquant en dehors de la modal
+        closeButton.addEventListener("click", closeModal);
         modalOverlay.addEventListener("click", function(event) {
             if (event.target === modalOverlay) {
-                modalOverlay.style.display = "none";
-                document.body.classList.remove("no-scroll");
-                document.body.style.paddingRight = "";
-                resetFormFields();
+                closeModal();
             }
         });
     });
@@ -101,7 +93,7 @@ function showPhotoForm() {
     const modalGallery = document.querySelector(".galleryContainer");
     const modalForm = document.querySelector(".formContainer");
     const backButton = document.querySelector(".backButton");
-    const imageInput = document.querySelector('#image');
+    const imageInput = document.querySelector('.image');
 
     // Change l'affichage pour montrer le formulaire d'ajout
     if (modalGallery && modalForm) {
@@ -251,7 +243,7 @@ function modalForm() {
     // Crée l'élément input pour sélectionner une image
     const imageInput = document.createElement('input');
     imageInput.type = 'file';
-    imageInput.id = 'image';
+    imageInput.classList = 'image';
     imageInput.name = 'image';
     imageInput.accept = ".jpg, .jpeg, .png";
     imageInput.placeholder = 'Ajouter photo';
@@ -309,7 +301,7 @@ function modalForm() {
                 if (infoText) infoText.style.display = 'none';
                 if (customButton) customButton.style.display = 'none';
 
-                const errorContainer = document.querySelector('.error-image-container');
+                const errorContainer = document.querySelector('.errorImageContainer');
                 if (errorContainer) {
                     errorContainer.innerHTML = '';
                 }
@@ -321,12 +313,12 @@ function modalForm() {
 
     // Conteneur de prévisualisation de l'image
     const previewContainer = document.createElement('div');
-    previewContainer.id = 'imagePreview';
+    previewContainer.classList = 'imagePreview';
     addImageInput.appendChild(previewContainer);
 
     // Conteneur d'erreur pour l'image
     const imageErrorContainer = document.createElement('div');
-    imageErrorContainer.classList.add('error-image-container');
+    imageErrorContainer.classList.add('errorImageContainer');
     addImageInput.insertAdjacentElement('afterend', imageErrorContainer);
 
     // Ajout du texte d'information sur le format de l'image
@@ -338,11 +330,12 @@ function modalForm() {
     const titleLabel = document.createElement('label');
     titleLabel.setAttribute('for', 'title');
     titleLabel.textContent = 'Titre';
+    titleLabel.classList ='modalLabel';
     modalFormContainer.appendChild(titleLabel);
 
     const titleInput = document.createElement('input');
     titleInput.type = 'text';
-    titleInput.id = 'title';
+    titleInput.classList = 'modalTitle';
     titleInput.name = 'title';
     titleInput.required = true;
     titleInput.placeholder = 'Ajouter un titre';
@@ -350,12 +343,12 @@ function modalForm() {
 
     // Conteneur d'erreur pour le titre
     const titleErrorContainer = document.createElement('div');
-    titleErrorContainer.classList.add('error-title-container');
+    titleErrorContainer.classList.add('errorTitleContainer');
     titleInput.insertAdjacentElement('afterend', titleErrorContainer);
 
     // Écouteur pour effacer l'erreur lorsque l'utilisateur saisit un titre
     titleInput.addEventListener('input', function() {
-        const errorContainer = document.querySelector('.error-title-container');
+        const errorContainer = document.querySelector('.errorTitleContainer');
         if (titleInput.value.trim()) {
             errorContainer.innerHTML = '';
         }
@@ -365,22 +358,23 @@ function modalForm() {
     const categoryLabel = document.createElement('label');
     categoryLabel.setAttribute('for', 'category');
     categoryLabel.textContent = 'Catégorie';
+    categoryLabel.classList ='modalLabel';
     modalFormContainer.appendChild(categoryLabel);
 
     const categorySelect = document.createElement('select');
-    categorySelect.id = 'category';
+    categorySelect.classList = 'modalCategory';
     categorySelect.name = 'category';
     categorySelect.required = true;
     modalFormContainer.appendChild(categorySelect);
 
     // Conteneur d'erreur pour la catégorie
     const categoryErrorContainer = document.createElement('div');
-    categoryErrorContainer.classList.add('error-category-container');
+    categoryErrorContainer.classList.add('errorCategoryContainer');
     categorySelect.insertAdjacentElement('afterend', categoryErrorContainer);
 
     // Écouteur pour effacer l'erreur lorsque l'utilisateur sélectionne une catégorie
     categorySelect.addEventListener('change', function() {
-        const errorContainer = document.querySelector('.error-category-container');
+        const errorContainer = document.querySelector('.errorCategoryContainer');
         if (categorySelect.value) {
             errorContainer.innerHTML = '';
         }
@@ -428,81 +422,66 @@ function modalForm() {
 
 // Fonction pour ajouter un nouveau travail à la galerie
 function addNewWork() {
-    const imageInput = document.querySelector('#image');
-    const titleInput = document.querySelector('#title');
-    const categorySelect = document.querySelector('#category');
+    const imageInput = document.querySelector('.image');
+    const titleInput = document.querySelector('.modalTitle');
+    const categorySelect = document.querySelector('.modalCategory');
 
     // Supprime les messages d'erreur existants
-    const errorMessages = document.querySelectorAll('.error-message');
-    errorMessages.forEach((errorMessage) => {
-        errorMessage.remove();
-    });
+    document.querySelectorAll('.errorMessage').forEach(error => error.remove());
 
     let formIsValid = true;
 
     // Validation de l'image
     if (!imageInput.files[0]) {
         formIsValid = false;
-        const errorContainer = document.querySelector('.error-image-container');
-        errorContainer.innerHTML = '';
-        const errorMessage = document.createElement('p');
-        errorMessage.classList.add('error-message');
-        errorMessage.textContent = 'Veuillez ajouter une image.';
-        errorContainer.appendChild(errorMessage);
+        const errorContainer = document.querySelector('.errorImageContainer');
+        errorContainer.innerHTML = '<p class="errorMessage">Veuillez ajouter une image.</p>';
     }
 
     // Validation du titre
     if (!titleInput.value.trim()) {
         formIsValid = false;
-        const errorContainer = document.querySelector('.error-title-container');
-        errorContainer.innerHTML = '';
-        const errorMessage = document.createElement('p');
-        errorMessage.classList.add('error-message');
-        errorMessage.textContent = 'Le titre est obligatoire.';
-        errorContainer.appendChild(errorMessage);
+        const errorContainer = document.querySelector('.errorTitleContainer');
+        errorContainer.innerHTML = '<p class="errorMessage">Le titre est obligatoire.</p>';
     }
 
     // Validation de la catégorie
     if (!categorySelect.value) {
         formIsValid = false;
-        const errorContainer = document.querySelector('.error-category-container');
-        errorContainer.innerHTML = '';
-        const errorMessage = document.createElement('p');
-        errorMessage.classList.add('error-message');
-        errorMessage.textContent = 'Veuillez sélectionner une catégorie.';
-        errorContainer.appendChild(errorMessage);
+        const errorContainer = document.querySelector('.errorCategoryContainer');
+        errorContainer.innerHTML = '<p class="errorMessage">Veuillez sélectionner une catégorie.</p>';
     }
-
-    // Réinitialise les erreurs si l'utilisateur modifie l'input
-    imageInput.addEventListener('change', function() {
-        const errorContainer = document.querySelector('.error-image-container');
-        if (imageInput.files[0]) {
-            errorContainer.innerHTML = '';
-        }
-    });
-    titleInput.addEventListener('input', function() {
-        const errorContainer = document.querySelector('.error-title-container');
-        if (titleInput.value.trim()) {
-            errorContainer.innerHTML = '';
-        }
-    });
-    categorySelect.addEventListener('change', function() {
-        const errorContainer = document.querySelector('.error-category-container');
-        if (categorySelect.value) {
-            errorContainer.innerHTML = '';
-        }
-    });
 
     // Si le formulaire n'est pas valide, on arrête le traitement
     if (!formIsValid) {
         return;
     }
 
-    // Crée un FormData pour envoyer les données du formulaire
-    const formData = new FormData();
-    formData.append('image', imageInput.files[0]);
-    formData.append('title', titleInput.value);
-    formData.append('category', categorySelect.value);
+    // Ajoute les écouteurs d'événements uniquement la première fois
+    if (!eventListenersAdded) {
+        imageInput.addEventListener('change', function() {
+            const errorContainer = document.querySelector('.errorImageContainer');
+            if (imageInput.files[0]) {
+                errorContainer.innerHTML = '';
+            }
+        });
+
+        titleInput.addEventListener('input', function() {
+            const errorContainer = document.querySelector('.errorTitleContainer');
+            if (titleInput.value.trim()) {
+                errorContainer.innerHTML = '';
+            }
+        });
+
+        categorySelect.addEventListener('change', function() {
+            const errorContainer = document.querySelector('.errorCategoryContainer');
+            if (categorySelect.value) {
+                errorContainer.innerHTML = '';
+            }
+        });
+
+        eventListenersAdded = true; // Marque les écouteurs comme ajoutés
+    }
 
     // Vérifie si l'utilisateur est connecté
     const token = sessionStorage.getItem("token");
@@ -512,6 +491,11 @@ function addNewWork() {
     }
 
     // Envoie les données via un POST pour ajouter le travail
+    const formData = new FormData();
+    formData.append('image', imageInput.files[0]);
+    formData.append('title', titleInput.value);
+    formData.append('category', categorySelect.value);
+
     fetch('http://localhost:5678/api/works/', {
         method: 'POST',
         body: formData,
@@ -521,9 +505,8 @@ function addNewWork() {
     })
     .then(response => response.json())
     .then(data => {
-    
         const gallery = document.querySelector('.mainGallery');
-    
+
         // Crée un conteneur pour la nouvelle image dans la galerie
         const newImageContainer = document.createElement('div');
         newImageContainer.classList.add('imageContainer');
@@ -536,32 +519,31 @@ function addNewWork() {
         newImageContainer.appendChild(newImg);
         newImageContainer.appendChild(newTitle);
         gallery.appendChild(newImageContainer);
-    
+
         // Ferme la modal après ajout
-        const modalOverlay = document.querySelector('.modalOverlay');
-        if (modalOverlay) modalOverlay.style.display = 'none';
-    
+        document.querySelector('.modalOverlay').style.display = 'none';
+
         // Réinitialise le formulaire
         imageInput.value = '';
         titleInput.value = '';
         categorySelect.selectedIndex = 0;
-        document.body.classList.remove("no-scroll");
-    
+        document.body.style.overflow = "";
+
         modalGallery();
         resetFormFields();
-    })
+    });
 }
 
 // Réinitialise les champs du formulaire
 function resetFormFields() {
-    const imageInput = document.querySelector('#image');
-    const titleInput = document.querySelector('#title');
-    const categorySelect = document.querySelector('#category');
+    const imageInput = document.querySelector('.image');
+    const titleInput = document.querySelector('.modalTitle');
+    const categorySelect = document.querySelector('.modalCategory');
     
     if (imageInput) {
         imageInput.value = '';
         
-        const previewContainer = document.querySelector('#imagePreview');
+        const previewContainer = document.querySelector('.imagePreview');
         if (previewContainer) {
             previewContainer.innerHTML = '';
         }
@@ -576,7 +558,7 @@ function resetFormFields() {
     }
 
     // Efface les messages d'erreur
-    const errorMessages = document.querySelectorAll('.error-message');
+    const errorMessages = document.querySelectorAll('.errorMessage');
     errorMessages.forEach((errorMessage) => {
         errorMessage.remove();
     });
