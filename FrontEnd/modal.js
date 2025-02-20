@@ -1,77 +1,79 @@
-export { openModal, checkAuth, modalGallery, modalForm,};
+export { openModal, modalGallery, modalForm,};
 
 let eventListenersAdded = false;
 
-// Fonction de vérification de l'authentification
-function checkAuth() {
-
-    // Récupère le token d'authentification dans le localStorage
-    const token = localStorage.getItem("token");
-    const openModalLink = document.querySelector(".openModalLink");
-
-    // Si un token existe, affiche le lien pour ouvrir la modal
-    if (token) {
-        openModalLink.style.display = "inline";
-    } else {
-        // Sinon, cache le lien
-        openModalLink.style.display = "none";
-    }
-};
-
 // Fonction pour ouvrir la modal
 function openModal() {
+    // Sélectionne les éléments nécessaires pour l'affichage de la modal
     const openModalLink = document.querySelector(".openModalLink");
     const modalOverlay = document.querySelector(".modalOverlay");
     const modalContent = document.querySelector(".modalContent");
 
+    // Vérifie si la section contenant les boutons retour et fermeture existe déjà
     let backAndClose = document.querySelector('.backAndClose');
     if (!backAndClose) {
+        // Création d'un conteneur pour les boutons retour et fermeture
         backAndClose = document.createElement('div');
         backAndClose.classList.add('backAndClose');
 
+        // Création du bouton retour
         const backButton = document.createElement('button');
         backButton.classList.add('backButton');
         backButton.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
         backAndClose.appendChild(backButton);
 
+        // Création du bouton de fermeture
         const closeButton = document.createElement('button');
         closeButton.classList.add('closeButton');
         closeButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
         backAndClose.appendChild(closeButton);
 
+        // Insère la barre contenant les boutons en haut du contenu de la modal
         modalContent.insertBefore(backAndClose, modalContent.firstChild);
     }
 
+    // Ajoute un événement au clic sur le lien d'ouverture de la modal
     openModalLink.addEventListener("click", function(event) {
         event.preventDefault();
 
+        // Calcul de la largeur du scrollbar pour éviter les décalages
         const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
 
+        // Ajuste la barre de mode édition
         const modeEditionBar = document.querySelector('.modeEditionBar');
         if (modeEditionBar) {
             modeEditionBar.style.paddingRight = `${scrollbarWidth}px`;
         }
 
-        // Empêcher le défilement
+        // Empêche le défilement de la page en arrière-plan
         document.body.style.overflow = "hidden";
         document.body.style.paddingRight = `${scrollbarWidth}px`;
 
+        // Affiche la modal et son contenu
         modalOverlay.style.display = "flex";
         modalContent.style.display = "block";
 
+        // Gère l'affichage des différentes sections de la modal
         const modalGallery = document.querySelector(".galleryContainer");
         const modalForm = document.querySelector(".formContainer");
         if (modalGallery) modalGallery.style.display = "flex";
         if (modalForm) modalForm.style.display = "none";
 
+        // Sélectionne les boutons de retour et fermeture
         const backButton = document.querySelector('.backButton');
         const closeButton = document.querySelector('.closeButton');
+
+        // Cache le bouton de retour
         if (backButton) backButton.style.display = "none";
+
+        // Affiche le bouton de fermeture
         if (closeButton) closeButton.style.display = "block";
 
+        // Masque l'input d'ajout d'image
         const imageInput = document.querySelector('.image');
         if (imageInput) imageInput.style.display = 'none';
 
+        // Fonction pour fermer la modal
         function closeModal() {
             modalOverlay.style.display = "none";
             document.body.style.overflow = "";
@@ -79,7 +81,10 @@ function openModal() {
             resetFormFields();
         }
 
+        // Ajoute un événement pour fermer la modal lorsque l'utilisateur clique sur le bouton de fermeture
         closeButton.addEventListener("click", closeModal);
+
+        // Ajoute un événement pour fermer la modal si l'utilisateur clique en dehors du contenu
         modalOverlay.addEventListener("click", function(event) {
             if (event.target === modalOverlay) {
                 closeModal();
@@ -380,22 +385,6 @@ function modalForm() {
         }
     });
 
-    // Création et ajout du bouton de validation
-    let addNewWorkButton = document.querySelector('.addNewWorkButton');
-    if (!addNewWorkButton) {
-        addNewWorkButton = document.createElement('button');
-        addNewWorkButton.classList.add('addNewWorkButton');
-        addNewWorkButton.innerHTML = 'Valider';
-    }
-
-    formContainer.appendChild(addNewWorkButton);
-
-    // Ajoute l'événement pour valider le formulaire
-    addNewWorkButton.addEventListener('click', function(event) {
-        event.preventDefault();
-        addNewWork();
-    });
-
     // Récupère les catégories depuis l'API et les affiche dans le select
     categorySelect.innerHTML = '';
     fetch('http://localhost:5678/api/categories/')
@@ -418,6 +407,22 @@ function modalForm() {
                 categorySelect.appendChild(option);
             });
         })
+
+    // Création et ajout du bouton de validation
+    let addNewWorkButton = document.querySelector('.addNewWorkButton');
+    if (!addNewWorkButton) {
+        addNewWorkButton = document.createElement('button');
+        addNewWorkButton.classList.add('addNewWorkButton');
+        addNewWorkButton.innerHTML = 'Valider';
+    }
+
+    formContainer.appendChild(addNewWorkButton);
+
+    // Ajoute l'événement pour valider le formulaire
+    addNewWorkButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        addNewWork();
+    });
 }
 
 // Fonction pour ajouter un nouveau travail à la galerie
@@ -480,7 +485,7 @@ function addNewWork() {
             }
         });
 
-        eventListenersAdded = true; // Marque les écouteurs comme ajoutés
+        eventListenersAdded = true;
     }
 
     // Vérifie si l'utilisateur est connecté

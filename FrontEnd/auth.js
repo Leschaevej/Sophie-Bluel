@@ -103,17 +103,17 @@ function userLogin() {
         loginButton.addEventListener("click", async function () {
             const email = document.querySelector(".loginEmail").value;
             const password = document.querySelector(".loginPassword").value;
+
             const errorMessage = document.querySelector(".loginError");
             errorMessage.style.display = "none";
             errorMessage.textContent = "";
+
             const loginData = { email, password };
 
             try {
                 const response = await fetch("http://localhost:5678/api/users/login", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(loginData)
                 });
 
@@ -124,7 +124,7 @@ function userLogin() {
                 const data = await response.json();
                 sessionStorage.setItem("token", data.token);
 
-                // Création de la barre de mode édition et mise à jour des liens
+                // Ajout de la barre d'édition
                 const modeEditionBar = document.createElement('div');
                 modeEditionBar.classList = 'modeEditionBar';
                 const penIcon = document.createElement('i');
@@ -135,17 +135,19 @@ function userLogin() {
                 modeEditionBar.appendChild(text);
                 document.documentElement.insertBefore(modeEditionBar, document.body);
 
-                const loginLink = document.querySelector(".loginLink");
-                const logoutLink = document.querySelector(".logoutLink");
-                const openModalLink = document.querySelector(".openModalLink");
-                loginLink.style.display = "none";
-                logoutLink.style.display = "inline";
-                openModalLink.style.display = "inline";
+                // Masquer uniquement les boutons des filtres
+                document.querySelectorAll(".filter button").forEach(button => button.style.display = "none");
+                const allButton = document.getElementById("tous")
+                if (allButton) {
+                    allButton.click();
+                }
+                
+                // Mise à jour des liens de connexion
+                document.querySelector(".loginLink").style.display = "none";
+                document.querySelector(".logoutLink").style.display = "inline";
+                document.querySelector(".openModalLink").style.display = "inline";
 
-                // Lier l'événement de déconnexion au bouton logout
-                logoutLink.addEventListener("click", logOut);
-
-                // Fermer l'overlay de login après la connexion
+                document.querySelector(".logoutLink").addEventListener("click", logOut);
                 closeLoginOverlay();
 
             } catch (error) {
@@ -168,29 +170,21 @@ function closeLoginOverlay() {
 
 // Fonction pour gérer la déconnexion de l'utilisateur
 function logOut() {
-    // Supprimer le token
     sessionStorage.removeItem("token");
 
-    // Masquer la barre de mode édition
     const modeEditionBar = document.querySelector('.modeEditionBar');
     if (modeEditionBar) {
         modeEditionBar.remove();
     }
 
-    // Réinitialiser les liens de connexion
-    const loginLink = document.querySelector(".loginLink");
-    const logoutLink = document.querySelector(".logoutLink");
-    const openModalLink = document.querySelector(".openModalLink");
-    
-    // Afficher le lien de connexion et masquer celui de déconnexion et l'édition
-    loginLink.style.display = "inline";
-    logoutLink.style.display = "none";
-    openModalLink.style.display = "none";
+    document.querySelector(".loginLink").style.display = "inline";
+    document.querySelector(".logoutLink").style.display = "none";
+    document.querySelector(".openModalLink").style.display = "none";
 
-    // Fermer l'overlay de connexion si ouvert
+    // Réafficher les boutons des filtres après déconnexion
+    document.querySelectorAll(".filter button").forEach(button => button.style.display = "inline-block");
+
     closeLoginOverlay();
-
-    // Réinitialiser l'overflow et le padding du body
     document.body.style.overflow = '';
     document.body.style.paddingRight = '';
 }

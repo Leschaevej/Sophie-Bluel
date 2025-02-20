@@ -1,11 +1,10 @@
 import { showLoginOverlay, loginForm, userLogin, logOut } from "./auth.js"; 
-import { openModal, checkAuth, modalGallery, modalForm, } from "./modal.js";
+import { openModal, modalGallery, modalForm, } from "./modal.js";
 
 let worksData =[];
 
 // Fonction asynchrone pour générer les travaux à partir de l'API
 async function generateWorks() {
-    // Récupération des travaux depuis l'API
     const response = await fetch("http://localhost:5678/api/works/", {
         method: "GET",
         headers: {
@@ -13,16 +12,12 @@ async function generateWorks() {
         },
     });
 
-    // Transformation des pièces en JSON
     worksData = await response.json();
 
-    // Récupération de l'élément du DOM qui accueillera les travaux
     const sectionGallery = document.querySelector(".mainGallery");
     sectionGallery.innerHTML = '';
 
-    // Boucle sur les travaux récupérés pour les afficher dans la galerie
     worksData.forEach(article => {
-
         const imageContainer = document.createElement("div");
         imageContainer.classList.add("imageContainer");
         imageContainer.setAttribute("data-id", article.id);
@@ -35,26 +30,35 @@ async function generateWorks() {
 
         imageContainer.appendChild(imageElement);
         imageContainer.appendChild(nomElement);
-        sectionGallery.appendChild(imageContainer);        
+        sectionGallery.appendChild(imageContainer);
     });
-    modalGallery();
+
+    modalGallery(); // Mettre à jour la galerie dans la modal
+}
+
+// Appel initial pour récupérer les travaux et activer le bouton "Tous"
+async function init() {
+    // Appelez la fonction pour générer les œuvres
+    await generateWorks();
+
+    // Récupérer le bouton "Tous" et le mettre en actif
+    const allButton = document.querySelector(".filter button");
+    setActiveButton(allButton);
 }
 
 // Fonction pour générer les filtres
 function generateFilter() {
-
     const sectionFilter = document.querySelector(".filter");
 
-    // Création du bouton "Tous" pour afficher toutes les œuvres
     const allButton = document.createElement("button");
     allButton.innerText = "Tous";
+    allButton.id = "tous";
     allButton.addEventListener("click", function () {
         generateWorks();
         setActiveButton(allButton);
     });
     allButton.classList.add("active");
 
-    // Création du bouton "Objets" pour filtrer les œuvres par catégorie "Objets"
     const objectButton = document.createElement("button");
     objectButton.innerText = "Objets";
     objectButton.addEventListener("click", function () {
@@ -63,7 +67,6 @@ function generateFilter() {
         setActiveButton(objectButton);
     });
 
-    // Création du bouton "Appartements" pour filtrer les œuvres par catégorie "Appartements"
     const apartmentButton = document.createElement("button");
     apartmentButton.innerText = "Appartements";
     apartmentButton.addEventListener("click", function () {
@@ -72,7 +75,6 @@ function generateFilter() {
         setActiveButton(apartmentButton);
     });
 
-    // Création du bouton "Hotels & Restaurant" pour filtrer les œuvres par catégorie "Hotels & restaurants"
     const hotelAndRestaurantButton = document.createElement("button");
     hotelAndRestaurantButton.innerText = "Hotels & Restaurant";
     hotelAndRestaurantButton.addEventListener("click", function () {
@@ -81,7 +83,6 @@ function generateFilter() {
         setActiveButton(hotelAndRestaurantButton);
     });
 
-    // Ajout des boutons créés dans la section des filtres
     sectionFilter.appendChild(allButton);
     sectionFilter.appendChild(objectButton);
     sectionFilter.appendChild(apartmentButton);
@@ -93,7 +94,6 @@ function updateGallery(filteredWorks) {
     const galleryContainer = document.querySelector('.mainGallery');
     galleryContainer.innerHTML = '';
 
-    // Boucle pour afficher les œuvres filtrées dans la galerie
     filteredWorks.forEach(work => {
         const imageElement = document.createElement('div');
         imageElement.classList.add('image');
@@ -106,20 +106,19 @@ function updateGallery(filteredWorks) {
     });
 }
 
-// Fonction pour gerer le bouton actif
+// Fonction pour gérer le bouton actif
 function setActiveButton(selectedButton) {
-
     const buttons = document.querySelectorAll(".filter button");
 
-    // Retirer la classe active de tous les boutons
     buttons.forEach(button => {
         button.classList.remove("active");
     });
 
-    // Ajouter la classe active au bouton sélectionné
     selectedButton.classList.add("active");
 }
 
+// Appeler la fonction d'initialisation dès le chargement de la page
+window.addEventListener('DOMContentLoaded', init);
 
 // Fonction pour créer le formulaire de contact
 function contactForm() {
@@ -275,7 +274,6 @@ function contactForm() {
 modalForm();
 loginForm();
 contactForm();
-checkAuth();
 openModal();
 logOut();
 userLogin();
