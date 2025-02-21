@@ -34,14 +34,8 @@ async function generateWorks() {
     });
 
     modalGallery(); // Mettre à jour la galerie dans la modal
-}
 
-// Appel initial pour récupérer les travaux et activer le bouton "Tous"
-async function init() {
-    // Appelez la fonction pour générer les œuvres
-    await generateWorks();
-
-    // Récupérer le bouton "Tous" et le mettre en actif
+    // Activer manuellement le bouton "Tous"
     const allButton = document.querySelector(".filter button");
     setActiveButton(allButton);
 }
@@ -50,14 +44,20 @@ async function init() {
 function generateFilter() {
     const sectionFilter = document.querySelector(".filter");
 
+    if (!sectionFilter) {
+        return;
+    }
+
+    sectionFilter.innerHTML = '';
+
     const allButton = document.createElement("button");
     allButton.innerText = "Tous";
     allButton.id = "tous";
+    allButton.classList.add("active");
     allButton.addEventListener("click", function () {
         generateWorks();
         setActiveButton(allButton);
     });
-    allButton.classList.add("active");
 
     const objectButton = document.createElement("button");
     objectButton.innerText = "Objets";
@@ -76,7 +76,7 @@ function generateFilter() {
     });
 
     const hotelAndRestaurantButton = document.createElement("button");
-    hotelAndRestaurantButton.innerText = "Hotels & Restaurant";
+    hotelAndRestaurantButton.innerText = "Hotels & Restaurants";
     hotelAndRestaurantButton.addEventListener("click", function () {
         const filteredWorks = worksData.filter(works => works.category.name === "Hotels & restaurants");
         updateGallery(filteredWorks);
@@ -117,8 +117,10 @@ function setActiveButton(selectedButton) {
     selectedButton.classList.add("active");
 }
 
-// Appeler la fonction d'initialisation dès le chargement de la page
-window.addEventListener('DOMContentLoaded', init);
+// Appeler les fonctions nécessaires dès le chargement de la page
+window.addEventListener('DOMContentLoaded', async () => {
+    await generateWorks();
+});
 
 // Fonction pour créer le formulaire de contact
 function contactForm() {
@@ -284,4 +286,3 @@ logOut();
 userLogin();
 showLoginOverlay();
 generateFilter();
-generateWorks();
