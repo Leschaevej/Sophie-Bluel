@@ -145,7 +145,9 @@ function contactForm() {
     form.appendChild(nameLabel);
     const nameInput = document.createElement('input');
     nameInput.type = 'text';
+    nameInput.id = 'name';
     nameInput.name = 'name';
+    nameInput.autocomplete = 'name';
     nameInput.classList = 'contactName';
     nameInput.required = true;
     form.appendChild(nameInput);
@@ -161,7 +163,9 @@ function contactForm() {
     form.appendChild(emailLabel);
     const emailInput = document.createElement('input');
     emailInput.type = 'email';
+    emailInput.id = 'email';
     emailInput.name = 'email';
+    emailInput.autocomplete = 'email';
     emailInput.classList = 'contactEmail';
     emailInput.required = true;
     form.appendChild(emailInput);
@@ -176,6 +180,7 @@ function contactForm() {
     messageLabel.classList = 'contactLabel';
     form.appendChild(messageLabel);
     const messageTextArea = document.createElement('textarea');
+    messageTextArea.id = 'message';
     messageTextArea.name = 'message';
     messageTextArea.classList = 'contactMessage';
     messageTextArea.cols = 30;

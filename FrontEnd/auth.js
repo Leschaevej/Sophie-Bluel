@@ -59,7 +59,9 @@ function loginForm() {
     const emailInput = document.createElement('input');
     emailInput.type = 'text';
     emailInput.classList = 'loginEmail';
+    emailInput.id = 'emailUser';
     emailInput.name = 'email';
+    emailInput.autocomplete = 'email';
     emailInput.required = true;
     form.appendChild(emailInput);
 
@@ -72,6 +74,7 @@ function loginForm() {
     const passwordInput = document.createElement('input');
     passwordInput.type = 'password';
     passwordInput.classList = 'loginPassword';
+    passwordInput.id = 'password';
     passwordInput.name = 'password';
     passwordInput.required = true;
     form.appendChild(passwordInput);

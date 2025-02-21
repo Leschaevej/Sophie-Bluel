@@ -341,6 +341,7 @@ function modalForm() {
     const titleInput = document.createElement('input');
     titleInput.type = 'text';
     titleInput.classList = 'modalTitle';
+    titleInput.id = 'title';
     titleInput.name = 'title';
     titleInput.required = true;
     titleInput.placeholder = 'Ajouter un titre';
@@ -368,6 +369,7 @@ function modalForm() {
 
     const categorySelect = document.createElement('select');
     categorySelect.classList = 'modalCategory';
+    categorySelect.id = 'category';
     categorySelect.name = 'category';
     categorySelect.required = true;
     modalFormContainer.appendChild(categorySelect);
