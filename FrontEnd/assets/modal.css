@@ -245,25 +245,15 @@ input {
     height: 15px;
 }
 
-.category {
+.modalCategory {
     width: 100%;
     padding: 15px 16px;
-    font-size: 16px;
-    font-family: 'Work Sans', sans-serif;
     cursor: pointer;
     color: #444;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
-}
-
-.category option:disabled {
-    color: #aaa;
-    font-weight: bold;
-}
-
-.category option {
-    background-color: #e8f1f6;
-    padding: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
 }
 
 .addNewWorkButton {
